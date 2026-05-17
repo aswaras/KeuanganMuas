@@ -108,6 +108,7 @@
       const [toastMessage, setToastMessage] = useState(null);
       const [isSyncing, setIsSyncing] = useState(false);
       const [isInitialLoad, setIsInitialLoad] = useState(true);
+      const [catatTrigger, setCatatTrigger] = useState(null);
 
       // Data States
       const [transactions, setTransactions] = useState([]);
@@ -240,12 +241,12 @@
           ),
 
           e('div', { className: "grid grid-cols-2 gap-4" },
-            e('button', { onClick: () => setActiveTab('catat'), className: "bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-sm flex flex-col items-center justify-center gap-2 border border-gray-100 dark:border-gray-700 active:scale-95 transition-transform" }, e('div', { className: "bg-emerald-100 dark:bg-emerald-900/50 p-3 rounded-full text-emerald-600" }, e(Icon, { name: "plus", size: 24 })), e('span', { className: "text-sm font-medium text-gray-700 dark:text-gray-200" }, "Catat Masuk")),
-            e('button', { onClick: () => setActiveTab('catat'), className: "bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-sm flex flex-col items-center justify-center gap-2 border border-gray-100 dark:border-gray-700 active:scale-95 transition-transform" }, e('div', { className: "bg-red-100 dark:bg-red-900/50 p-3 rounded-full text-red-600" }, e(Icon, { name: "minus", size: 24 })), e('span', { className: "text-sm font-medium text-gray-700 dark:text-gray-200" }, "Catat Keluar"))
+            e('button', { onClick: () => { setCatatTrigger('in'); setActiveTab('catat'); }, className: "bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-sm flex flex-col items-center justify-center gap-2 border border-gray-100 dark:border-gray-700 active:scale-95 transition-transform" }, e('div', { className: "bg-emerald-100 dark:bg-emerald-900/50 p-3 rounded-full text-emerald-600" }, e(Icon, { name: "plus", size: 24 })), e('span', { className: "text-sm font-medium text-gray-700 dark:text-gray-200" }, "Catat Masuk")),
+            e('button', { onClick: () => { setCatatTrigger('out'); setActiveTab('catat'); }, className: "bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-sm flex flex-col items-center justify-center gap-2 border border-gray-100 dark:border-gray-700 active:scale-95 transition-transform" }, e('div', { className: "bg-red-100 dark:bg-red-900/50 p-3 rounded-full text-red-600" }, e(Icon, { name: "minus", size: 24 })), e('span', { className: "text-sm font-medium text-gray-700 dark:text-gray-200" }, "Catat Keluar"))
           ),
 
           e('div', null,
-            e('div', { className: "flex justify-between items-center mb-4" }, e('h3', { className: "font-bold text-gray-900 dark:text-white" }, "Transaksi Terakhir"), e('button', { onClick: () => setActiveTab('catat'), className: "text-emerald-500 text-sm font-medium" }, "Lihat Semua")),
+            e('div', { className: "flex justify-between items-center mb-4" }, e('h3', { className: "font-bold text-gray-900 dark:text-white" }, "Transaksi Terakhir"), e('button', { onClick: () => { setCatatTrigger(null); setActiveTab('catat'); }, className: "text-emerald-500 text-sm font-medium" }, "Lihat Semua")),
             e('div', { className: "space-y-3" },
               transactions.length === 0 ? e('p', {className: "text-center text-sm text-gray-400 py-4"}, "Belum ada transaksi") :
               transactions.slice().reverse().slice(0, 5).map(t => 
@@ -266,10 +267,10 @@
       };
 
       const CatatComponent = () => {
-        const [isFormOpen, setIsFormOpen] = useState(false);
+        const [isFormOpen, setIsFormOpen] = useState(catatTrigger ? true : false);
         const [editTx, setEditTx] = useState(null); // Menyimpan state data yang mau diedit
         
-        const [formType, setFormType] = useState('out');
+        const [formType, setFormType] = useState(catatTrigger || 'out');
         const [amount, setAmount] = useState('');
         const [date, setDate] = useState(getTodayDate());
         const [note, setNote] = useState('');
@@ -278,6 +279,14 @@
         const [showRangeModal, setShowRangeModal] = useState(false);
         const [startDate, setStartDate] = useState('');
         const [endDate, setEndDate] = useState('');
+
+        // Efek untuk memantau trigger dari halaman beranda
+        useEffect(() => {
+          if (catatTrigger) {
+            setIsFormOpen(true);
+            setFormType(catatTrigger);
+          }
+        }, [catatTrigger]);
 
         const handleSave = (eEvent) => {
           eEvent.preventDefault();
@@ -294,6 +303,7 @@
           
           setAmount(''); setNote(''); setDate(getTodayDate());
           setIsFormOpen(false);
+          setCatatTrigger(null);
           showToast("Transaksi berhasil dicatat!");
         };
 
@@ -381,9 +391,9 @@
 
           // MODAL TAMBAH (CENTERED)
           isFormOpen && e('div', { className: "fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fade-in" },
-            e('div', { className: "absolute inset-0", onClick: () => setIsFormOpen(false) }),
+            e('div', { className: "absolute inset-0", onClick: () => { setIsFormOpen(false); setCatatTrigger(null); } }),
             e('div', { className: "w-full max-w-xs sm:max-w-sm bg-white dark:bg-gray-800 rounded-3xl p-6 shadow-2xl relative z-10 animate-fade-in" },
-              e('div', { className: "flex justify-between items-center mb-6" }, e('h3', { className: "text-xl font-bold text-gray-900 dark:text-white" }, "Catat Keuangan"), e('button', { onClick: () => setIsFormOpen(false), className: "text-gray-400 hover:text-gray-600 text-sm font-bold" }, "Batal")),
+              e('div', { className: "flex justify-between items-center mb-6" }, e('h3', { className: "text-xl font-bold text-gray-900 dark:text-white" }, "Catat Keuangan"), e('button', { onClick: () => { setIsFormOpen(false); setCatatTrigger(null); }, className: "text-gray-400 hover:text-gray-600 text-sm font-bold" }, "Batal")),
               e('div', { className: "flex bg-gray-100 dark:bg-gray-900 rounded-xl p-1 mb-5" }, e('button', { onClick: () => setFormType('out'), className: `flex-1 py-2.5 rounded-lg text-sm font-bold transition-all ${formType === 'out' ? 'bg-white dark:bg-gray-700 text-red-500 shadow-sm' : 'text-gray-500'}` }, "Pengeluaran"), e('button', { onClick: () => setFormType('in'), className: `flex-1 py-2.5 rounded-lg text-sm font-bold transition-all ${formType === 'in' ? 'bg-white dark:bg-gray-700 text-emerald-500 shadow-sm' : 'text-gray-500'}` }, "Pemasukan")),
               e('form', { onSubmit: handleSave, className: "space-y-4" },
                 e('div', { className: "relative" }, e('span', { className: "absolute left-4 top-3.5 text-gray-400 font-extrabold text-lg" }, "Rp"), e('input', { type: "text", inputMode: "numeric", value: amount, onChange: ev => setAmount(formatNumberInput(ev.target.value)), placeholder: "0", className: "w-full bg-gray-50 dark:bg-gray-900 border-none pl-12 pr-4 py-3.5 rounded-2xl text-2xl font-black focus:ring-2 focus:ring-emerald-500 dark:text-white outline-none", required: true, autoFocus: true })),
@@ -735,7 +745,7 @@
 
         e('nav', { className: "absolute bottom-0 w-full bg-white/95 dark:bg-gray-900/95 backdrop-blur-md border-t border-gray-200 dark:border-gray-800 pb-safe pt-2 px-6 flex justify-between items-center z-50" },
           e(NavButton, { tabId: 'dashboard', iconName: 'home', label: 'Beranda', onClickOverride: () => {setActiveTab('dashboard'); setSelectedPerson(null);} }),
-          e(NavButton, { tabId: 'catat', iconName: 'wallet', label: 'Catat', onClickOverride: () => {setActiveTab('catat'); setSelectedPerson(null);} }),
+          e(NavButton, { tabId: 'catat', iconName: 'wallet', label: 'Catat', onClickOverride: () => {setCatatTrigger(null); setActiveTab('catat'); setSelectedPerson(null);} }),
           e(NavButton, { tabId: 'hutang', iconName: 'users', label: 'Hutang', onClickOverride: () => {setActiveTab('hutang'); setSelectedPerson(null);} }),
           e(NavButton, { tabId: 'settings', iconName: 'settings', label: 'Setelan', onClickOverride: () => {setActiveTab('settings'); setSelectedPerson(null);} })
         )
