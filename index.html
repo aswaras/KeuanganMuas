@@ -80,7 +80,11 @@
     };
 
     // --- UTILITAS ---
-    const formatRp = (angka) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(angka || 0);
+    const formatRp = (angka) => 'Rp ' + new Intl.NumberFormat('id-ID').format(angka || 0);
+    const formatNumberInput = (val) => {
+      if (!val) return '';
+      return val.toString().replace(/[^0-9]/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    };
     const generateId = () => 'ID-' + Math.random().toString(36).substr(2, 9);
     const getTodayDate = () => {
       const d = new Date();
@@ -288,8 +292,9 @@
 
         const handleSave = (eEvent) => {
           eEvent.preventDefault();
-          if (!amount || !category) return;
-          const newTx = { id: generateId(), type: formType, amount: parseInt(amount, 10), category, date, note };
+          const parsedAmount = parseInt(amount.toString().replace(/\./g, ''), 10);
+          if (!parsedAmount || !category) return;
+          const newTx = { id: generateId(), type: formType, amount: parsedAmount, category, date, note };
           
           setTransactions([...transactions, newTx]);
           syncToCloud('addTransaction', newTx);
@@ -380,7 +385,7 @@
               e('div', { className: "flex justify-between items-center mb-6" }, e('h3', { className: "text-xl font-bold text-gray-900 dark:text-white" }, "Catat Keuangan"), e('button', { onClick: () => setIsFormOpen(false), className: "text-gray-400 hover:text-gray-600 text-sm font-bold" }, "Batal")),
               e('div', { className: "flex bg-gray-100 dark:bg-gray-900 rounded-xl p-1 mb-5" }, e('button', { onClick: () => setFormType('out'), className: `flex-1 py-2.5 rounded-lg text-sm font-bold transition-all ${formType === 'out' ? 'bg-white dark:bg-gray-700 text-red-500 shadow-sm' : 'text-gray-500'}` }, "Pengeluaran"), e('button', { onClick: () => setFormType('in'), className: `flex-1 py-2.5 rounded-lg text-sm font-bold transition-all ${formType === 'in' ? 'bg-white dark:bg-gray-700 text-emerald-500 shadow-sm' : 'text-gray-500'}` }, "Pemasukan")),
               e('form', { onSubmit: handleSave, className: "space-y-4" },
-                e('div', { className: "relative" }, e('span', { className: "absolute left-4 top-3.5 text-gray-400 font-extrabold text-lg" }, "Rp"), e('input', { type: "number", value: amount, onChange: ev => setAmount(ev.target.value), placeholder: "0", className: "w-full bg-gray-50 dark:bg-gray-900 border-none pl-12 pr-4 py-3.5 rounded-2xl text-2xl font-black focus:ring-2 focus:ring-emerald-500 dark:text-white outline-none", required: true, autoFocus: true })),
+                e('div', { className: "relative" }, e('span', { className: "absolute left-4 top-3.5 text-gray-400 font-extrabold text-lg" }, "Rp"), e('input', { type: "text", inputMode: "numeric", value: amount, onChange: ev => setAmount(formatNumberInput(ev.target.value)), placeholder: "0", className: "w-full bg-gray-50 dark:bg-gray-900 border-none pl-12 pr-4 py-3.5 rounded-2xl text-2xl font-black focus:ring-2 focus:ring-emerald-500 dark:text-white outline-none", required: true, autoFocus: true })),
                 e('div', { className: "grid grid-cols-2 gap-3" }, e('input', { type: "text", value: category, onChange: ev => setCategory(ev.target.value), placeholder: "Kategori (Makan, dll)", className: "w-full bg-gray-50 dark:bg-gray-900 border-none p-3.5 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 dark:text-white outline-none", required: true }), e('input', { type: "date", value: date, onChange: ev => setDate(ev.target.value), className: "w-full bg-gray-50 dark:bg-gray-900 border-none p-3.5 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 dark:text-white text-gray-600 outline-none", required: true })),
                 e('input', { type: "text", value: note, onChange: ev => setNote(ev.target.value), placeholder: "Catatan opsional...", className: "w-full bg-gray-50 dark:bg-gray-900 border-none p-3.5 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 dark:text-white outline-none" }),
                 e('button', { type: "submit", className: `w-full py-4 mt-2 rounded-2xl text-white font-extrabold active:scale-95 transition-transform ${formType === 'in' ? 'bg-emerald-500 shadow-md shadow-emerald-200 dark:shadow-none' : 'bg-red-500 shadow-md shadow-red-200 dark:shadow-none'}` }, "Simpan Transaksi")
@@ -449,8 +454,9 @@
 
           const handleAddDebt = (ev) => {
             ev.preventDefault();
-            if (!amount) return;
-            const newDebt = { id: generateId(), person: selectedPerson, type: formType, amount: parseInt(amount, 10), date: getTodayDate(), note };
+            const parsedAmount = parseInt(amount.toString().replace(/\./g, ''), 10);
+            if (!parsedAmount) return;
+            const newDebt = { id: generateId(), person: selectedPerson, type: formType, amount: parsedAmount, date: getTodayDate(), note };
             setDebts([...debts, newDebt]);
             syncToCloud('addDebt', newDebt);
             setAmount(''); setNote('');
@@ -473,7 +479,7 @@
                 e('button', { onClick: () => setFormType('hutang'), className: `flex-1 py-2 rounded-lg text-sm font-bold transition-all ${formType === 'hutang' ? 'bg-white dark:bg-gray-700 text-red-500 shadow-sm' : 'text-gray-500'}` }, "Saya Meminjam")
               ),
               e('form', { onSubmit: handleAddDebt, className: "space-y-3" },
-                e('div', {className: "relative"}, e('span', {className: "absolute left-4 top-3.5 text-gray-400 font-bold"}, "Rp"), e('input', { type: "number", value: amount, onChange: ev => setAmount(ev.target.value), placeholder: "0", className: "w-full bg-gray-50 dark:bg-gray-900 border-none pl-12 pr-4 py-3 rounded-xl text-lg font-bold focus:ring-2 focus:ring-emerald-500 dark:text-white outline-none", required: true })),
+                e('div', {className: "relative"}, e('span', {className: "absolute left-4 top-3.5 text-gray-400 font-bold"}, "Rp"), e('input', { type: "text", inputMode: "numeric", value: amount, onChange: ev => setAmount(formatNumberInput(ev.target.value)), placeholder: "0", className: "w-full bg-gray-50 dark:bg-gray-900 border-none pl-12 pr-4 py-3 rounded-xl text-lg font-bold focus:ring-2 focus:ring-emerald-500 dark:text-white outline-none", required: true })),
                 e('input', { type: "text", value: note, onChange: ev => setNote(ev.target.value), placeholder: "Keterangan (cth: pinjam untuk servis)", className: "w-full bg-gray-50 dark:bg-gray-900 border-none p-3 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 dark:text-white outline-none", required: true }),
                 e('button', { type: "submit", className: "w-full py-3.5 mt-2 rounded-xl text-white font-bold bg-gray-900 dark:bg-emerald-600 hover:bg-gray-800 active:scale-95 transition-transform" }, "Simpan Catatan")
               )
