@@ -6,12 +6,10 @@
   <title>KeuanganKu</title>
   <meta name="theme-color" content="#10b981">
   
-  <!-- PWA Meta Tags -->
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💸</text></svg>">
   
-  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   
   <!-- CSS Variables untuk Dynamic Theme -->
@@ -29,7 +27,6 @@
     }
   </script>
 
-  <!-- React & ReactDOM -->
   <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
   <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
 
@@ -41,6 +38,8 @@
     .pb-safe { padding-bottom: env(safe-area-inset-bottom, 20px); }
     .animate-fade-in { animation: fadeIn 0.3s ease-in-out; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    .loader { border-top-color: var(--p-500); -webkit-animation: spinner 1.5s linear infinite; animation: spinner 1.5s linear infinite; }
+    @keyframes spinner { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
   </style>
 </head>
 <body>
@@ -48,13 +47,14 @@
   <div id="root"></div>
 
   <script>
-    // --- KONFIGURASI DATABASE GOOGLE APPS SCRIPT ---
-    const GAS_URL = "https://script.google.com/macros/s/AKfycbx5afFDUVhfEzx-wG9wRbElB_e9SbQrvV8GKG5tyGflC_5bTpaEnq3gv0__lV8ly16YHw/exec";
+    // ========================================================
+    // KONFIGURASI DATABASE GOOGLE APPS SCRIPT
+    // ========================================================
+    const GAS_URL = "https://script.google.com/macros/s/AKfycbxwjUOCFw2fR_Kq2Md1KzKNG93Nqqe1JFjj9_lGqXgZZgzyDd48AU6EXWD04nTTVCnGAA/exec";
 
     const e = React.createElement;
     const { useState, useEffect, useMemo, useRef } = React;
 
-    // --- KOMPONEN IKON SVG ---
     const Icon = ({ name, size = 24, className = "" }) => {
       const paths = {
         home: "M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6",
@@ -72,6 +72,7 @@
         chevronLeft: "M15 19l-7-7 7-7",
         sun: "M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z",
         moon: "M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z",
+        cloud: "M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z",
         check: "M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z",
         pieChart: "M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z|M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z",
         calendar: "M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z",
@@ -83,10 +84,10 @@
       );
     };
 
-    // --- UTILITAS ---
     const formatRp = (angka) => 'Rp ' + new Intl.NumberFormat('id-ID').format(angka || 0);
     const formatNumberInput = (val) => {
       if (!val) return '';
+      // Hapus karakter non-digit, lalu format pakai titik
       return val.toString().replace(/[^0-9]/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, ".");
     };
     const generateId = () => 'ID-' + Math.random().toString(36).substr(2, 9);
@@ -95,29 +96,71 @@
       return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
     };
 
-    // --- KOMPONEN UTAMA APLIKASI ---
+    // ========================================================
+    // MAIN APP COMPONENT
+    // ========================================================
     function App() {
       // 1. GLOBAL STATES
       const [activeTab, setActiveTab] = useState('dashboard');
       const [isDarkMode, setIsDarkMode] = useState(false);
       const [themeColor, setThemeColor] = useState('hijau');
-      const [accountName, setAccountName] = useState('KeluargaMuas');
+      const [accountName, setAccountName] = useState('Budi Setiawan');
       const [toastMessage, setToastMessage] = useState(null);
+      const [isSyncing, setIsSyncing] = useState(false);
+      const [isInitialLoad, setIsInitialLoad] = useState(true);
 
       // Data States
-      const [transactions, setTransactions] = useState([
-        { id: '1', type: 'in', amount: 5000000, date: getTodayDate(), note: 'Gaji Bulan Ini' },
-        { id: '2', type: 'out', amount: 150000, date: getTodayDate(), note: 'Makan siang bareng teman' },
-      ]);
-      const [debts, setDebts] = useState([
-        { id: '1', person: 'Andi', type: 'piutang', amount: 200000, date: getTodayDate(), note: 'Bayar makan' },
-        { id: '2', person: 'Siska', type: 'hutang', amount: 500000, date: '2026-05-12', note: 'Servis motor' }
-      ]);
-      const [contacts, setContacts] = useState([
-        { name: 'Andi', phone: '081234567890' },
-        { name: 'Siska', phone: '089876543210' }
-      ]);
+      const [transactions, setTransactions] = useState([]);
+      const [debts, setDebts] = useState([]);
+      const [contacts, setContacts] = useState([]);
       const [selectedPerson, setSelectedPerson] = useState(null);
+
+      useEffect(() => {
+        if (!GAS_URL || GAS_URL.includes("URL_GOOGLE")) {
+          // Dummy data untuk preview
+          setTransactions([
+            { id: '1', type: 'in', amount: 5000000, date: getTodayDate(), note: 'Gaji Bulan Ini' },
+            { id: '2', type: 'out', amount: 150000, date: getTodayDate(), note: 'Makan siang bareng teman' },
+          ]);
+          setDebts([
+            { id: '1', person: 'Andi', type: 'piutang', amount: 200000, date: getTodayDate(), note: 'Bayar makan' },
+            { id: '2', person: 'Siska', type: 'hutang', amount: 500000, date: '2026-05-12', note: 'Servis motor' }
+          ]);
+          setContacts([{ name: 'Andi', phone: '081234567890' }, { name: 'Siska', phone: '089876543210' }]);
+          setIsInitialLoad(false);
+          return;
+        }
+
+        fetch(GAS_URL)
+          .then(res => res.json())
+          .then(data => {
+            if(data.transactions) setTransactions(data.transactions.map(t => ({...t, amount: Number(t.amount)})));
+            if(data.debts) setDebts(data.debts.map(d => ({...d, amount: Number(d.amount)})));
+            if(data.contacts) setContacts(data.contacts);
+            setIsInitialLoad(false);
+          })
+          .catch(err => {
+            console.error(err);
+            showToast("Gagal mengambil data Cloud. Mode Lokal Aktif.");
+            setIsInitialLoad(false);
+          });
+      }, []);
+
+      const syncToCloud = async (action, payload) => {
+        if (!GAS_URL || GAS_URL.includes("URL_GOOGLE")) return;
+        setIsSyncing(true);
+        try {
+          await fetch(GAS_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify({ action, payload })
+          });
+        } catch (err) {
+          console.error(err);
+        } finally {
+          setIsSyncing(false);
+        }
+      };
 
       // Effect Sinkronisasi Tema Warna
       useEffect(() => {
@@ -132,7 +175,6 @@
         }
       }, [themeColor]);
 
-      // Effect Tema Gelap
       useEffect(() => {
         if (isDarkMode) document.documentElement.classList.add('dark');
         else document.documentElement.classList.remove('dark');
@@ -143,12 +185,6 @@
         setTimeout(() => setToastMessage(null), 3000);
       };
 
-      // FUNGSI API SEMENTARA
-      const syncToCloud = (action, payload) => {
-        // Fungsi placeholder untuk fetch ke Google Apps Script
-      };
-
-      // Kalkulasi Global
       const totalPemasukan = transactions.filter(t => t.type === 'in').reduce((acc, curr) => acc + curr.amount, 0);
       const totalPengeluaran = transactions.filter(t => t.type === 'out').reduce((acc, curr) => acc + curr.amount, 0);
       const saldoAktif = totalPemasukan - totalPengeluaran;
@@ -165,12 +201,19 @@
         );
       };
 
-      // B. Halaman Dashboard
+      const renderInitialLoading = () => {
+        if (!isInitialLoad) return null;
+        return e('div', { className: "absolute inset-0 bg-gray-50 dark:bg-gray-900 z-50 flex flex-col items-center justify-center animate-fade-in" },
+          e('div', { className: "w-12 h-12 border-4 border-emerald-500 rounded-full loader mb-4" }),
+          e('p', { className: "text-gray-500 dark:text-gray-400 font-medium animate-pulse" }, "Mengambil data...")
+        );
+      };
+
       const renderDashboard = () => {
         return e('div', { className: "p-4 space-y-6 pb-24 h-full overflow-y-auto no-scrollbar animate-fade-in" },
           e('div', { className: "flex justify-between items-center" },
             e('div', null,
-              e('p', { className: "text-sm text-gray-500 dark:text-gray-400 flex items-center gap-1" }, "Selamat datang,"),
+              e('p', { className: "text-sm text-gray-500 dark:text-gray-400 flex items-center gap-1" }, "Selamat datang,", isSyncing && e(Icon, { name: "cloud", size: 14, className: "text-emerald-500 animate-pulse" })),
               e('h1', { className: "text-xl font-bold text-gray-900 dark:text-white" }, accountName)
             ),
             e('div', { className: "w-10 h-10 bg-emerald-100 dark:bg-emerald-900 rounded-full flex items-center justify-center text-emerald-600 font-bold uppercase" }, accountName.charAt(0))
@@ -178,6 +221,7 @@
           
           e('div', { className: "bg-gradient-to-br from-emerald-500 to-emerald-700 rounded-3xl p-6 text-white shadow-xl shadow-emerald-200 dark:shadow-none relative overflow-hidden" },
             e('div', { className: "absolute -right-6 -top-6 w-32 h-32 bg-white opacity-10 rounded-full" }),
+            e('div', { className: "absolute right-10 -bottom-10 w-24 h-24 bg-white opacity-10 rounded-full" }),
             e('p', { className: "text-emerald-100 text-sm mb-1 relative z-10" }, "Total Saldo Tersedia"),
             e('h2', { className: "text-4xl font-extrabold tracking-tight mb-6 relative z-10" }, formatRp(saldoAktif)),
             e('div', { className: "grid grid-cols-2 gap-4 border-t border-emerald-400/30 pt-4 relative z-10" },
@@ -221,10 +265,9 @@
         );
       };
 
-      // C. Halaman Catat Transaksi
       const CatatComponent = () => {
         const [isFormOpen, setIsFormOpen] = useState(false);
-        const [editTx, setEditTx] = useState(null);
+        const [editTx, setEditTx] = useState(null); // Menyimpan state data yang mau diedit
         
         const [formType, setFormType] = useState('out');
         const [amount, setAmount] = useState('');
@@ -238,8 +281,12 @@
 
         const handleSave = (eEvent) => {
           eEvent.preventDefault();
+          // Bersihkan titik sebelum disimpan
           const parsedAmount = parseInt(amount.toString().replace(/\./g, ''), 10);
-          if (!parsedAmount || !note) { alert("Nominal dan catatan wajib diisi!"); return; }
+          if (!parsedAmount || !note) {
+            alert("Nominal dan Catatan wajib diisi!");
+            return;
+          }
           const newTx = { id: generateId(), type: formType, amount: parsedAmount, date, note };
           
           setTransactions([...transactions, newTx]);
@@ -255,8 +302,10 @@
           const parsedAmount = parseInt(editTx.amount.toString().replace(/\./g, ''), 10);
           if (!parsedAmount || !editTx.note) return;
           const updatedTx = { ...editTx, amount: parsedAmount };
+          
           setTransactions(transactions.map(t => t.id === updatedTx.id ? updatedTx : t));
           syncToCloud('editTransaction', updatedTx);
+          
           setEditTx(null);
           showToast("Transaksi diperbarui!");
         };
@@ -290,14 +339,12 @@
 
         return e('div', { className: "h-full flex flex-col relative bg-gray-50 dark:bg-gray-900 animate-fade-in" },
           
-          // Header Catat
           e('div', { className: "p-4 flex justify-between items-center border-b border-gray-100 dark:border-gray-800" },
             e('div', null, e('h2', { className: "text-2xl font-bold text-gray-900 dark:text-white" }, "Buku Kas"), e('p', { className: "text-xs text-gray-500 capitalize" }, `Filter: ${timeFilter === 'kustom' ? `${startDate} s/d ${endDate}` : timeFilter}`)),
             e('button', { onClick: () => setShowRangeModal(true), className: "p-2 bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 text-gray-600 dark:text-gray-300 active:scale-95 transition-transform" }, e(Icon, { name: "calendar", size: 22 }))
           ),
 
           e('div', { className: "flex-1 overflow-y-auto no-scrollbar px-4 pb-36" },
-            // Kartu Total Akumulasi (Tetap Keseluruhan)
             e('div', { className: "mt-4 p-5 rounded-3xl bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-800 shadow-sm relative overflow-hidden" },
               e('p', { className: "text-xs text-gray-400 font-medium" }, "Total Kas Keseluruhan"),
               e('h3', { className: `text-3xl font-extrabold mt-1 ${saldoAktif >= 0 ? 'text-emerald-500' : 'text-red-500'}` }, formatRp(saldoAktif)),
@@ -307,14 +354,13 @@
               )
             ),
 
-            // Tombol Filter Cepat
             e('div', { className: "flex gap-2 my-5 overflow-x-auto no-scrollbar py-1" },
               [{ id: 'semua', label: 'Semua' }, { id: 'harian', label: 'Harian' }, { id: 'mingguan', label: 'Mingguan' }, { id: 'bulanan', label: 'Bulanan' }, { id: 'tahunan', label: 'Tahunan' }].map(f => 
                 e('button', { key: f.id, onClick: () => setTimeFilter(f.id), className: `px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap transition-all active:scale-95 ${timeFilter === f.id ? 'bg-emerald-500 text-white shadow-md shadow-emerald-200 dark:shadow-none' : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 border border-gray-100 dark:border-gray-700'}` }, f.label)
               )
             ),
 
-            // List Transaksi (Klik untuk Edit)
+            // LIST TRANSAKSI
             e('div', { className: "space-y-3" },
               filteredTx.length === 0 ? e('div', { className: "text-center py-12 text-gray-400" }, e(Icon, { name: "pieChart", size: 40, className: "mx-auto mb-2 opacity-30" }), e('p', { className: "text-sm" }, "Tidak ada transaksi dalam filter ini")) :
               filteredTx.map(t => 
@@ -329,12 +375,11 @@
             )
           ),
 
-          // Tombol Tambah Melayang
           e('div', { className: "absolute bottom-16 left-0 w-full p-4 bg-gradient-to-t from-gray-50 via-gray-50 to-transparent dark:from-gray-900 dark:via-gray-900 z-40" },
             e('button', { onClick: () => setIsFormOpen(true), className: "w-full py-4 bg-emerald-500 hover:bg-emerald-600 active:scale-95 transition-all text-white font-extrabold rounded-2xl shadow-lg shadow-emerald-100 dark:shadow-none flex items-center justify-center gap-2" }, e(Icon, { name: "plus", size: 20 }), "Catat Transaksi Baru")
           ),
 
-          // Modal Tengah Tambah Transaksi
+          // MODAL TAMBAH (CENTERED)
           isFormOpen && e('div', { className: "fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fade-in" },
             e('div', { className: "absolute inset-0", onClick: () => setIsFormOpen(false) }),
             e('div', { className: "w-full max-w-xs sm:max-w-sm bg-white dark:bg-gray-800 rounded-3xl p-6 shadow-2xl relative z-10 animate-fade-in" },
@@ -342,14 +387,14 @@
               e('div', { className: "flex bg-gray-100 dark:bg-gray-900 rounded-xl p-1 mb-5" }, e('button', { onClick: () => setFormType('out'), className: `flex-1 py-2.5 rounded-lg text-sm font-bold transition-all ${formType === 'out' ? 'bg-white dark:bg-gray-700 text-red-500 shadow-sm' : 'text-gray-500'}` }, "Pengeluaran"), e('button', { onClick: () => setFormType('in'), className: `flex-1 py-2.5 rounded-lg text-sm font-bold transition-all ${formType === 'in' ? 'bg-white dark:bg-gray-700 text-emerald-500 shadow-sm' : 'text-gray-500'}` }, "Pemasukan")),
               e('form', { onSubmit: handleSave, className: "space-y-4" },
                 e('div', { className: "relative" }, e('span', { className: "absolute left-4 top-3.5 text-gray-400 font-extrabold text-lg" }, "Rp"), e('input', { type: "text", inputMode: "numeric", value: amount, onChange: ev => setAmount(formatNumberInput(ev.target.value)), placeholder: "0", className: "w-full bg-gray-50 dark:bg-gray-900 border-none pl-12 pr-4 py-3.5 rounded-2xl text-2xl font-black focus:ring-2 focus:ring-emerald-500 dark:text-white outline-none", required: true, autoFocus: true })),
-                e('input', { type: "text", value: note, onChange: ev => setNote(ev.target.value), placeholder: "Keterangan/Catatan", className: "w-full bg-gray-50 dark:bg-gray-900 border-none p-3.5 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 dark:text-white outline-none", required: true }),
+                e('input', { type: "text", value: note, onChange: ev => setNote(ev.target.value), placeholder: "Keterangan / Catatan", className: "w-full bg-gray-50 dark:bg-gray-900 border-none p-3.5 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 dark:text-white outline-none", required: true }),
                 e('input', { type: "date", value: date, onChange: ev => setDate(ev.target.value), className: "w-full bg-gray-50 dark:bg-gray-900 border-none p-3.5 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 dark:text-white text-gray-600 outline-none", required: true }),
                 e('button', { type: "submit", className: `w-full py-4 mt-2 rounded-2xl text-white font-extrabold active:scale-95 transition-transform ${formType === 'in' ? 'bg-emerald-500 shadow-md shadow-emerald-200 dark:shadow-none' : 'bg-red-500 shadow-md shadow-red-200 dark:shadow-none'}` }, "Simpan Transaksi")
               )
             )
           ),
 
-          // Modal Edit Transaksi
+          // MODAL EDIT TRANSAKSI
           editTx && e('div', { className: "fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fade-in" },
             e('div', { className: "absolute inset-0", onClick: () => setEditTx(null) }),
             e('div', { className: "w-full max-w-xs sm:max-w-sm bg-white dark:bg-gray-800 rounded-3xl p-6 shadow-2xl relative z-10 animate-fade-in" },
@@ -357,7 +402,7 @@
               e('div', { className: "flex bg-gray-100 dark:bg-gray-900 rounded-xl p-1 mb-5" }, e('button', { onClick: () => setEditTx({...editTx, type: 'out'}), className: `flex-1 py-2.5 rounded-lg text-sm font-bold transition-all ${editTx.type === 'out' ? 'bg-white dark:bg-gray-700 text-red-500 shadow-sm' : 'text-gray-500'}` }, "Pengeluaran"), e('button', { onClick: () => setEditTx({...editTx, type: 'in'}), className: `flex-1 py-2.5 rounded-lg text-sm font-bold transition-all ${editTx.type === 'in' ? 'bg-white dark:bg-gray-700 text-emerald-500 shadow-sm' : 'text-gray-500'}` }, "Pemasukan")),
               e('form', { onSubmit: handleUpdateTx, className: "space-y-4" },
                 e('div', { className: "relative" }, e('span', { className: "absolute left-4 top-3.5 text-gray-400 font-extrabold text-lg" }, "Rp"), e('input', { type: "text", inputMode: "numeric", value: editTx.amount, onChange: ev => setEditTx({...editTx, amount: formatNumberInput(ev.target.value)}), placeholder: "0", className: "w-full bg-gray-50 dark:bg-gray-900 border-none pl-12 pr-4 py-3.5 rounded-2xl text-2xl font-black focus:ring-2 focus:ring-emerald-500 dark:text-white outline-none", required: true })),
-                e('input', { type: "text", value: editTx.note, onChange: ev => setEditTx({...editTx, note: ev.target.value}), placeholder: "Keterangan/Catatan", className: "w-full bg-gray-50 dark:bg-gray-900 border-none p-3.5 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 dark:text-white outline-none", required: true }),
+                e('input', { type: "text", value: editTx.note, onChange: ev => setEditTx({...editTx, note: ev.target.value}), placeholder: "Keterangan", className: "w-full bg-gray-50 dark:bg-gray-900 border-none p-3.5 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 dark:text-white outline-none", required: true }),
                 e('input', { type: "date", value: editTx.date, onChange: ev => setEditTx({...editTx, date: ev.target.value}), className: "w-full bg-gray-50 dark:bg-gray-900 border-none p-3.5 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 dark:text-white text-gray-600 outline-none", required: true }),
                 e('div', { className: "flex gap-3 mt-4" },
                   e('button', { type: "button", onClick: () => handleDeleteTx(editTx.id), className: "flex-1 py-4 rounded-2xl text-red-500 bg-red-50 dark:bg-red-900/20 font-extrabold active:scale-95 transition-transform" }, "Hapus"),
@@ -367,7 +412,6 @@
             )
           ),
 
-          // Modal Filter Tanggal Kustom
           showRangeModal && e('div', { className: "fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fade-in" },
             e('div', { className: "bg-white dark:bg-gray-800 w-full max-w-xs rounded-3xl p-6 shadow-2xl relative animate-fade-in" },
               e('h3', { className: "text-lg font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2" }, e(Icon, { name: "calendar", size: 20 }), "Pilih Range Tanggal"),
@@ -381,14 +425,14 @@
         );
       };
 
-      // D. Halaman HUTANG PIUTANG
       const HutangComponent = () => {
         const [isAddContactOpen, setIsAddContactOpen] = useState(false);
         const [contactNameInput, setContactNameInput] = useState('');
         const [contactPhoneInput, setContactPhoneInput] = useState('');
 
         const [isAddDebtOpen, setIsAddDebtOpen] = useState(false);
-        const [editDebt, setEditDebt] = useState(null); // Mode Edit
+        const [editDebt, setEditDebt] = useState(null);
+        
         const [formType, setFormType] = useState('piutang');
         const [amount, setAmount] = useState('');
         const [note, setNote] = useState('');
@@ -421,9 +465,9 @@
 
           setContactNameInput(''); setContactPhoneInput('');
           setIsAddContactOpen(false);
+          showToast('Kontak disimpan!');
         };
 
-        // --- SUB-HALAMAN: DETAIL KONTAK ---
         if (selectedPerson) {
           const personDebts = debts.filter(d => d.person === selectedPerson).reverse();
           const netBalance = personSummary[selectedPerson] || 0;
@@ -447,6 +491,7 @@
             const parsedAmount = parseInt(editDebt.amount.toString().replace(/\./g, ''), 10);
             if (!parsedAmount || !editDebt.note) return;
             const updatedDebt = { ...editDebt, amount: parsedAmount };
+            
             setDebts(debts.map(d => d.id === updatedDebt.id ? updatedDebt : d));
             syncToCloud('editDebt', updatedDebt);
             setEditDebt(null);
@@ -462,7 +507,7 @@
 
           const handlePelunasan = () => {
             if (netBalance === 0) return;
-            const type = netBalance > 0 ? 'hutang' : 'piutang'; // Opposite to zero out
+            const type = netBalance > 0 ? 'hutang' : 'piutang'; // Lawan dari saldo untuk pelunasan
             const newDebt = { id: generateId(), person: selectedPerson, type, amount: Math.abs(netBalance), date: getTodayDate(), note: 'Pelunasan' };
             setDebts([...debts, newDebt]);
             syncToCloud('addDebt', newDebt);
@@ -510,7 +555,7 @@
               e('button', { onClick: () => setIsAddDebtOpen(true), className: "w-full py-4 bg-emerald-500 hover:bg-emerald-600 active:scale-95 transition-all text-white font-extrabold rounded-2xl shadow-lg shadow-emerald-100 dark:shadow-none flex items-center justify-center gap-2" }, e(Icon, { name: "plus", size: 20 }), "Catat Pinjaman Baru")
             ),
 
-            // Modal Tambah Hutang/Piutang
+            // MODAL TAMBAH CATATAN
             isAddDebtOpen && e('div', { className: "fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fade-in" },
               e('div', { className: "absolute inset-0", onClick: () => setIsAddDebtOpen(false) }),
               e('div', { className: "w-full max-w-xs sm:max-w-sm bg-white dark:bg-gray-800 rounded-3xl p-6 shadow-2xl relative z-10 animate-fade-in" },
@@ -525,7 +570,7 @@
               )
             ),
 
-            // Modal Edit Hutang/Piutang
+            // MODAL EDIT CATATAN
             editDebt && e('div', { className: "fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fade-in" },
               e('div', { className: "absolute inset-0", onClick: () => setEditDebt(null) }),
               e('div', { className: "w-full max-w-xs sm:max-w-sm bg-white dark:bg-gray-800 rounded-3xl p-6 shadow-2xl relative z-10 animate-fade-in" },
@@ -582,7 +627,6 @@
         );
       };
 
-      // E. Halaman Settings
       const SettingsComponent = () => {
         const [draftName, setDraftName] = useState(accountName);
         const [draftDark, setDraftDark] = useState(isDarkMode);
@@ -666,7 +710,6 @@
         );
       };
 
-      // Navigasi Bawah
       const NavButton = ({ tabId, iconName, label, onClickOverride }) => {
         const isActive = activeTab === tabId;
         const clickHandler = onClickOverride || (() => setActiveTab(tabId));
@@ -679,8 +722,8 @@
         );
       };
 
-      // F. RENDER UTAMA ROOT DIV
       return e('div', { className: "w-full h-screen max-w-md mx-auto relative flex flex-col bg-gray-50 dark:bg-gray-900 shadow-2xl overflow-hidden font-sans" },
+        renderInitialLoading(),
         renderToast(),
         
         e('div', { className: "flex-1 overflow-hidden relative" },
@@ -699,7 +742,6 @@
       );
     }
 
-    // Eksekusi Render ke Layar
     const root = ReactDOM.createRoot(document.getElementById('root'));
     root.render(e(App));
   </script>
