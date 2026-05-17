@@ -3,58 +3,92 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>KeuanganKu</title>
-  <meta name="theme-color" content="#10b981">
+  <title>KeuanganKu Cloud</title>
+  <meta name="theme-color" content="#10b981" id="meta-theme-color">
   
+  <!-- PWA Meta Tags -->
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💸</text></svg>">
   
-  <script src="https://cdn.tailwindcss.com"></script>
-  
-  <!-- CSS Variables untuk Dynamic Theme -->
   <style>
+    /* CSS Variables for Dynamic Theming */
     :root {
-      --p-50: #ecfdf5; --p-100: #d1fae5; --p-200: #a7f3d0; --p-300: #6ee7b7; --p-400: #34d399; 
-      --p-500: #10b981; --p-600: #059669; --p-700: #047857; --p-800: #065f46; --p-900: #064e3b; --p-950: #022c22;
+      --color-primary-50: #ecfdf5;
+      --color-primary-100: #d1fae5;
+      --color-primary-200: #a7f3d0;
+      --color-primary-300: #6ee7b7;
+      --color-primary-400: #34d399;
+      --color-primary-500: #10b981;
+      --color-primary-600: #059669;
+      --color-primary-700: #047857;
+      --color-primary-900: #064e3b;
     }
-  </style>
-  
-  <script>
-    tailwind.config = {
-      darkMode: 'class',
-      theme: { extend: { colors: { emerald: { 50: 'var(--p-50)', 100: 'var(--p-100)', 200: 'var(--p-200)', 300: 'var(--p-300)', 400: 'var(--p-400)', 500: 'var(--p-500)', 600: 'var(--p-600)', 700: 'var(--p-700)', 800: 'var(--p-800)', 900: 'var(--p-900)', 950: 'var(--p-950)' } } } }
+    .theme-blue {
+      --color-primary-50: #eff6ff; --color-primary-100: #dbeafe; --color-primary-200: #bfdbfe;
+      --color-primary-300: #93c5fd; --color-primary-400: #60a5fa; --color-primary-500: #3b82f6;
+      --color-primary-600: #2563eb; --color-primary-700: #1d4ed8; --color-primary-900: #1e3a8a;
     }
-  </script>
+    .theme-purple {
+      --color-primary-50: #f5f3ff; --color-primary-100: #ede9fe; --color-primary-200: #ddd6fe;
+      --color-primary-300: #c4b5fd; --color-primary-400: #a78bfa; --color-primary-500: #8b5cf6;
+      --color-primary-600: #7c3aed; --color-primary-700: #6d28d9; --color-primary-900: #4c1d95;
+    }
 
-  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-
-  <style>
     body { margin: 0; padding: 0; background-color: #f3f4f6; overflow: hidden; -webkit-tap-highlight-color: transparent; font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
     .dark body { background-color: #111827; }
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     .pb-safe { padding-bottom: env(safe-area-inset-bottom, 20px); }
     .animate-fade-in { animation: fadeIn 0.3s ease-in-out; }
+    .animate-slide-up { animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-    .loader { border-top-color: var(--p-500); -webkit-animation: spinner 1.5s linear infinite; animation: spinner 1.5s linear infinite; }
+    @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+    .loader { border-top-color: var(--color-primary-500); -webkit-animation: spinner 1.5s linear infinite; animation: spinner 1.5s linear infinite; }
     @keyframes spinner { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
   </style>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: { 
+        extend: { 
+          colors: { 
+            primary: { 
+              50: 'var(--color-primary-50)', 100: 'var(--color-primary-100)', 200: 'var(--color-primary-200)',
+              300: 'var(--color-primary-300)', 400: 'var(--color-primary-400)', 500: 'var(--color-primary-500)', 
+              600: 'var(--color-primary-600)', 700: 'var(--color-primary-700)', 900: 'var(--color-primary-900)' 
+            } 
+          } 
+        } 
+      }
+    }
+  </script>
+
+  <!-- React & ReactDOM -->
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+
 </head>
-<body>
+<body class="theme-emerald"> <!-- Default theme -->
 
   <div id="root"></div>
 
   <script>
-    // ========================================================
+    // ==========================================
     // KONFIGURASI DATABASE GOOGLE APPS SCRIPT
-    // ========================================================
+    // ==========================================
     const GAS_URL = "https://script.google.com/macros/s/AKfycbxwjUOCFw2fR_Kq2Md1KzKNG93Nqqe1JFjj9_lGqXgZZgzyDd48AU6EXWD04nTTVCnGAA/exec";
+
+    // Keys untuk Local Storage (Offline Database)
+    const LS_KEYS = { TX: 'keuanganku_tx', DEBT: 'keuanganku_debt', CONTACT: 'keuanganku_contact', QUEUE: 'keuanganku_queue', SETTINGS: 'keuanganku_settings' };
 
     const e = React.createElement;
     const { useState, useEffect, useMemo, useRef } = React;
 
+    // --- KOMPONEN IKON SVG ---
     const Icon = ({ name, size = 24, className = "" }) => {
       const paths = {
         home: "M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6",
@@ -65,200 +99,269 @@
         minus: "M20 12H4",
         arrowUp: "M7 17L17 7m0 0H8m9 0v9",
         arrowDown: "M17 7l-10 10m0 0h9m-9 0V8",
-        search: "M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z",
-        filter: "M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z",
+        calendar: "M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z",
         download: "M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4",
         upload: "M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12",
         chevronLeft: "M15 19l-7-7 7-7",
         sun: "M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z",
         moon: "M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z",
-        cloud: "M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z",
+        database: "M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4",
         check: "M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z",
         pieChart: "M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z|M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z",
-        calendar: "M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z",
-        fileJson: "M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+        cloud: "M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z",
+        cloudOff: "M22.11 21.46L2.39 1.73 1.11 3l2.91 2.91A4.98 4.98 0 003 15h12.11l3.73 3.73 1.27-1.27zM5 15a3 3 0 01-.13-5.99L6.59 10.7A5.003 5.003 0 0014 13h1v2H5zM17 15h2a4 4 0 00-3.32-6.93 5.003 5.003 0 00-7.85-.75L9.69 9.1A3.003 3.003 0 0116.5 11h.5a2 2 0 012 2v.11l-2-2V15z"
       };
-      const pathStrings = paths[name] ? paths[name].split('|') : [];
+      const pathStrings = paths[name].split('|');
       return e('svg', { className, width: size, height: size, fill: "none", viewBox: "0 0 24 24", stroke: "currentColor" },
         pathStrings.map((d, i) => e('path', { key: i, strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: 2, d }))
       );
     };
 
-    const formatRp = (angka) => 'Rp ' + new Intl.NumberFormat('id-ID').format(angka || 0);
-    const formatNumberInput = (val) => {
-      if (!val) return '';
-      // Hapus karakter non-digit, lalu format pakai titik
-      return val.toString().replace(/[^0-9]/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-    };
+    // --- UTILITAS & FORMATTING ---
+    const formatRp = (angka) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(angka || 0);
+    const formatNumberInput = (val) => val.toString().replace(/\D/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+    const parseNumberInput = (val) => parseInt(val.toString().replace(/\./g, ''), 10) || 0;
     const generateId = () => 'ID-' + Math.random().toString(36).substr(2, 9);
-    const getTodayDate = () => {
-      const d = new Date();
-      return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-    };
+    const getTodayDate = () => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; };
 
-    // ========================================================
-    // MAIN APP COMPONENT
-    // ========================================================
+    // --- KOMPONEN UTAMA APLIKASI ---
     function App() {
+      // Load Settings from LocalStorage initially
+      const savedSettings = JSON.parse(localStorage.getItem(LS_KEYS.SETTINGS)) || { name: 'Keuangan Muas', theme: 'emerald', isDark: false };
+      
       // 1. GLOBAL STATES
       const [activeTab, setActiveTab] = useState('dashboard');
-      const [isDarkMode, setIsDarkMode] = useState(false);
-      const [themeColor, setThemeColor] = useState('hijau');
-      const [accountName, setAccountName] = useState('Keuangan Muas');
+      const [catatTrigger, setCatatTrigger] = useState(null); 
+      
+      const [appSettings, setAppSettings] = useState(savedSettings);
       const [toastMessage, setToastMessage] = useState(null);
+      
+      // Sinkronisasi States
+      const [isOnline, setIsOnline] = useState(navigator.onLine);
       const [isSyncing, setIsSyncing] = useState(false);
+      const [syncQueueLength, setSyncQueueLength] = useState((JSON.parse(localStorage.getItem(LS_KEYS.QUEUE)) || []).length);
       const [isInitialLoad, setIsInitialLoad] = useState(true);
-      const [catatTrigger, setCatatTrigger] = useState(null);
 
-      // Data States
-      const [transactions, setTransactions] = useState([]);
-      const [debts, setDebts] = useState([]);
-      const [contacts, setContacts] = useState([]);
+      // Data States (Default load dari LocalStorage)
+      const [transactions, setTransactions] = useState(JSON.parse(localStorage.getItem(LS_KEYS.TX)) || []);
+      const [debts, setDebts] = useState(JSON.parse(localStorage.getItem(LS_KEYS.DEBT)) || []);
+      const [contacts, setContacts] = useState(JSON.parse(localStorage.getItem(LS_KEYS.CONTACT)) || []);
       const [selectedPerson, setSelectedPerson] = useState(null);
 
-      useEffect(() => {
-        if (!GAS_URL || GAS_URL.includes("URL_GOOGLE")) {
-          // Dummy data untuk preview
-          setTransactions([
-            { id: '1', type: 'in', amount: 5000000, date: getTodayDate(), note: 'Gaji Bulan Ini' },
-            { id: '2', type: 'out', amount: 150000, date: getTodayDate(), note: 'Makan siang bareng teman' },
-          ]);
-          setDebts([
-            { id: '1', person: 'Andi', type: 'piutang', amount: 200000, date: getTodayDate(), note: 'Bayar makan' },
-            { id: '2', person: 'Siska', type: 'hutang', amount: 500000, date: '2026-05-12', note: 'Servis motor' }
-          ]);
-          setContacts([{ name: 'Andi', phone: '081234567890' }, { name: 'Siska', phone: '089876543210' }]);
-          setIsInitialLoad(false);
-          return;
-        }
-
-        fetch(GAS_URL)
-          .then(res => res.json())
-          .then(data => {
-            if(data.transactions) setTransactions(data.transactions.map(t => ({...t, amount: Number(t.amount)})));
-            if(data.debts) setDebts(data.debts.map(d => ({...d, amount: Number(d.amount)})));
-            if(data.contacts) setContacts(data.contacts);
-            setIsInitialLoad(false);
-          })
-          .catch(err => {
-            console.error(err);
-            showToast("Gagal mengambil data Cloud. Mode Lokal Aktif.");
-            setIsInitialLoad(false);
-          });
-      }, []);
-
-      const syncToCloud = async (action, payload) => {
-        if (!GAS_URL || GAS_URL.includes("URL_GOOGLE")) return;
-        setIsSyncing(true);
-        try {
-          await fetch(GAS_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-            body: JSON.stringify({ action, payload })
-          });
-        } catch (err) {
-          console.error(err);
-        } finally {
-          setIsSyncing(false);
-        }
+      // --- OFFLINE-FIRST LOGIC (LOCAL STORAGE WRAPPERS) ---
+      const updateTransactions = (newTxData) => {
+        setTransactions(newTxData);
+        localStorage.setItem(LS_KEYS.TX, JSON.stringify(newTxData));
+      };
+      const updateDebts = (newDebtData) => {
+        setDebts(newDebtData);
+        localStorage.setItem(LS_KEYS.DEBT, JSON.stringify(newDebtData));
+      };
+      const updateContacts = (newContactData) => {
+        setContacts(newContactData);
+        localStorage.setItem(LS_KEYS.CONTACT, JSON.stringify(newContactData));
       };
 
-      // Effect Sinkronisasi Tema Warna
-      useEffect(() => {
-        const palettes = {
-          hijau: { 50: '#ecfdf5', 100: '#d1fae5', 200: '#a7f3d0', 300: '#6ee7b7', 400: '#34d399', 500: '#10b981', 600: '#059669', 700: '#047857', 800: '#065f46', 900: '#064e3b', 950: '#022c22' },
-          biru: { 50: '#eff6ff', 100: '#dbeafe', 200: '#bfdbfe', 300: '#93c5fd', 400: '#60a5fa', 500: '#3b82f6', 600: '#2563eb', 700: '#1d4ed8', 800: '#1e40af', 900: '#1e3a8a', 950: '#172554' },
-          ungu: { 50: '#faf5ff', 100: '#f3e8ff', 200: '#e9d5ff', 300: '#d8b4fe', 400: '#c084fc', 500: '#a855f7', 600: '#9333ea', 700: '#7e22ce', 800: '#6b21a8', 900: '#581c87', 950: '#3b0764' }
-        };
-        const colors = palettes[themeColor] || palettes.hijau;
-        for (const [key, val] of Object.entries(colors)) {
-          document.documentElement.style.setProperty(`--p-${key}`, val);
+      // --- BACKGROUND SYNC MANAGER ---
+      const addToSyncQueue = (action, payload) => {
+        const queue = JSON.parse(localStorage.getItem(LS_KEYS.QUEUE)) || [];
+        const newItem = { qId: generateId(), action, payload };
+        queue.push(newItem);
+        localStorage.setItem(LS_KEYS.QUEUE, JSON.stringify(queue));
+        setSyncQueueLength(queue.length);
+        
+        // Coba sync langsung jika online
+        if(isOnline) processSyncQueue();
+      };
+
+      const processSyncQueue = async () => {
+        if (!navigator.onLine || !GAS_URL || GAS_URL.includes("URL_GOOGLE") || isSyncing) return;
+        
+        let queue = JSON.parse(localStorage.getItem(LS_KEYS.QUEUE)) || [];
+        if (queue.length === 0) return;
+
+        setIsSyncing(true);
+        let queueCopy = [...queue];
+
+        for (let i = 0; i < queue.length; i++) {
+          const item = queue[i];
+          try {
+            const response = await fetch(GAS_URL, {
+              method: 'POST',
+              headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+              body: JSON.stringify({ action: item.action, payload: item.payload })
+            });
+            const result = await response.json();
+            if (result.status === 'success') {
+              // Sukses, hapus dari antrean
+              queueCopy = queueCopy.filter(q => q.qId !== item.qId);
+              localStorage.setItem(LS_KEYS.QUEUE, JSON.stringify(queueCopy));
+              setSyncQueueLength(queueCopy.length);
+            } else { break; } // Stop jika API error logis
+          } catch (err) {
+            console.error('Sync error:', err);
+            break; // Stop loop jika koneksi terputus saat proses
+          }
         }
-      }, [themeColor]);
+        setIsSyncing(false);
+      };
+
+      // --- FETCH DATA AWAL DARI CLOUD ---
+      useEffect(() => {
+        const fetchCloudData = async () => {
+          if (!GAS_URL || GAS_URL.includes("URL_GOOGLE") || !navigator.onLine) {
+            setIsInitialLoad(false); return;
+          }
+          
+          // Jangan timpa data lokal jika masih ada antrean yg belum terkirim
+          const pendingQueue = JSON.parse(localStorage.getItem(LS_KEYS.QUEUE)) || [];
+          if (pendingQueue.length > 0) {
+            await processSyncQueue(); // Kirim data lokal dulu
+            if((JSON.parse(localStorage.getItem(LS_KEYS.QUEUE)) || []).length > 0) {
+              setIsInitialLoad(false); return; // Jika gagal kirim, batalkan fetch agar tidak tertimpa
+            }
+          }
+
+          fetch(GAS_URL)
+            .then(res => res.json())
+            .then(data => {
+              if(data.transactions) updateTransactions(data.transactions.map(t => ({...t, amount: Number(t.amount)})));
+              if(data.debts) updateDebts(data.debts.map(d => ({...d, amount: Number(d.amount)})));
+              if(data.contacts) updateContacts(data.contacts);
+              setIsInitialLoad(false);
+            })
+            .catch(err => {
+              console.error(err);
+              setIsInitialLoad(false);
+            });
+        };
+        fetchCloudData();
+      }, []);
+
+      // --- LISTENER JARINGAN & TEMA ---
+      useEffect(() => {
+        const handleOnline = () => { setIsOnline(true); processSyncQueue(); showToast("Kembali Online!"); };
+        const handleOffline = () => { setIsOnline(false); showToast("Mode Offline aktif"); };
+        
+        window.addEventListener('online', handleOnline);
+        window.addEventListener('offline', handleOffline);
+        
+        return () => {
+          window.removeEventListener('online', handleOnline);
+          window.removeEventListener('offline', handleOffline);
+        };
+      }, [isOnline]);
 
       useEffect(() => {
-        if (isDarkMode) document.documentElement.classList.add('dark');
+        if (appSettings.isDark) document.documentElement.classList.add('dark');
         else document.documentElement.classList.remove('dark');
-      }, [isDarkMode]);
+        document.body.className = `theme-${appSettings.theme}`;
+        
+        // Update warna meta tag PWA berdasarkan tema
+        const themeColors = { emerald: '#10b981', blue: '#3b82f6', purple: '#8b5cf6' };
+        document.getElementById('meta-theme-color').content = appSettings.isDark ? '#111827' : themeColors[appSettings.theme];
+      }, [appSettings]);
 
       const showToast = (msg) => {
         setToastMessage(msg);
         setTimeout(() => setToastMessage(null), 3000);
       };
 
+      // Kalkulasi Dashboard
       const totalPemasukan = transactions.filter(t => t.type === 'in').reduce((acc, curr) => acc + curr.amount, 0);
       const totalPengeluaran = transactions.filter(t => t.type === 'out').reduce((acc, curr) => acc + curr.amount, 0);
       const saldoAktif = totalPemasukan - totalPengeluaran;
       const healthRatio = totalPemasukan > 0 ? Math.round((totalPengeluaran / totalPemasukan) * 100) : 0;
 
-      // --- SUB-KOMPONEN ---
 
-      const renderToast = () => {
-        if(!toastMessage) return null;
-        return e('div', { className: "fixed top-4 left-1/2 -translate-x-1/2 z-[60] transition-all animate-fade-in" },
-          e('div', { className: "bg-gray-900 text-white px-6 py-3 rounded-full shadow-lg flex items-center gap-2 text-sm font-medium whitespace-nowrap" },
-            e(Icon, { name: "check", size: 18, className: "text-emerald-400" }), toastMessage
-          )
-        );
-      };
+      // --- SUB-KOMPONEN ---
 
       const renderInitialLoading = () => {
         if (!isInitialLoad) return null;
         return e('div', { className: "absolute inset-0 bg-gray-50 dark:bg-gray-900 z-50 flex flex-col items-center justify-center animate-fade-in" },
-          e('div', { className: "w-12 h-12 border-4 border-emerald-500 rounded-full loader mb-4" }),
-          e('p', { className: "text-gray-500 dark:text-gray-400 font-medium animate-pulse" }, "Mengambil data...")
+          e('div', { className: "w-12 h-12 border-4 border-gray-200 rounded-full loader mb-4" }),
+          e('p', { className: "text-gray-500 dark:text-gray-400 font-medium animate-pulse" }, "Memuat data lokal...")
         );
       };
 
+      const renderToast = () => {
+        if(!toastMessage) return null;
+        return e('div', { className: "fixed top-4 left-1/2 -translate-x-1/2 z- transition-all animate-fade-in" },
+          e('div', { className: "bg-gray-900 text-white px-6 py-3 rounded-full shadow-lg flex items-center gap-2 text-sm font-medium whitespace-nowrap" },
+            e(Icon, { name: "check", size: 18, className: "text-primary-400" }),
+            toastMessage
+          )
+        );
+      };
+
+      // B. Halaman Dashboard
       const renderDashboard = () => {
         return e('div', { className: "p-4 space-y-6 pb-24 h-full overflow-y-auto no-scrollbar animate-fade-in" },
           e('div', { className: "flex justify-between items-center" },
             e('div', null,
-              e('p', { className: "text-sm text-gray-500 dark:text-gray-400 flex items-center gap-1" }, "Selamat datang,", isSyncing && e(Icon, { name: "cloud", size: 14, className: "text-emerald-500 animate-pulse" })),
-              e('h1', { className: "text-xl font-bold text-gray-900 dark:text-white" }, accountName)
+              e('p', { className: "text-sm text-gray-500 dark:text-gray-400 flex items-center gap-1" }, 
+                "Selamat datang,", 
+                !isOnline ? e(Icon, { name: "cloudOff", size: 14, className: "text-red-500" }) : 
+                isSyncing ? e(Icon, { name: "cloud", size: 14, className: "text-primary-500 animate-pulse" }) : null
+              ),
+              e('h1', { className: "text-xl font-bold text-gray-900 dark:text-white" }, appSettings.name)
             ),
-            e('div', { className: "w-10 h-10 bg-emerald-100 dark:bg-emerald-900 rounded-full flex items-center justify-center text-emerald-600 font-bold uppercase" }, accountName.charAt(0))
+            e('div', { className: "w-10 h-10 bg-primary-100 dark:bg-primary-900 rounded-full flex items-center justify-center text-primary-600 font-bold uppercase" }, appSettings.name.charAt(0))
           ),
           
-          e('div', { className: "bg-gradient-to-br from-emerald-500 to-emerald-700 rounded-3xl p-6 text-white shadow-xl shadow-emerald-200 dark:shadow-none relative overflow-hidden" },
+          e('div', { className: "bg-gradient-to-br from-primary-500 to-primary-700 rounded-3xl p-6 text-white shadow-xl shadow-primary-200 dark:shadow-none relative overflow-hidden" },
             e('div', { className: "absolute -right-6 -top-6 w-32 h-32 bg-white opacity-10 rounded-full" }),
             e('div', { className: "absolute right-10 -bottom-10 w-24 h-24 bg-white opacity-10 rounded-full" }),
-            e('p', { className: "text-emerald-100 text-sm mb-1 relative z-10" }, "Total Saldo Tersedia"),
+            e('p', { className: "text-primary-100 text-sm mb-1 relative z-10" }, "Total Saldo Tersedia"),
             e('h2', { className: "text-4xl font-extrabold tracking-tight mb-6 relative z-10" }, formatRp(saldoAktif)),
-            e('div', { className: "grid grid-cols-2 gap-4 border-t border-emerald-400/30 pt-4 relative z-10" },
-              e('div', null, e('div', { className: "flex items-center text-emerald-100 text-xs mb-1" }, e(Icon, { name: "arrowDown", size: 14, className: "mr-1" }), "Pemasukan"), e('p', { className: "font-semibold text-sm" }, formatRp(totalPemasukan))),
-              e('div', null, e('div', { className: "flex items-center text-red-200 text-xs mb-1" }, e(Icon, { name: "arrowUp", size: 14, className: "mr-1" }), "Pengeluaran"), e('p', { className: "font-semibold text-sm" }, formatRp(totalPengeluaran)))
+            e('div', { className: "grid grid-cols-2 gap-4 border-t border-primary-400/30 pt-4 relative z-10" },
+              e('div', null,
+                e('div', { className: "flex items-center text-primary-100 text-xs mb-1" }, e(Icon, { name: "arrowDown", size: 14, className: "mr-1" }), "Pemasukan"),
+                e('p', { className: "font-semibold text-sm" }, formatRp(totalPemasukan))
+              ),
+              e('div', null,
+                e('div', { className: "flex items-center text-red-200 text-xs mb-1" }, e(Icon, { name: "arrowUp", size: 14, className: "mr-1" }), "Pengeluaran"),
+                e('p', { className: "font-semibold text-sm" }, formatRp(totalPengeluaran))
+              )
             )
           ),
 
           e('div', { className: "bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 flex items-center gap-4" },
-            e('div', { className: `p-3 rounded-full ${healthRatio < 70 ? 'bg-emerald-100 text-emerald-600 dark:bg-emerald-900/50' : 'bg-red-100 text-red-600 dark:bg-red-900/50'}` }, e(Icon, { name: "pieChart", size: 24 })),
+            e('div', { className: `p-3 rounded-full ${healthRatio < 70 ? 'bg-primary-100 text-primary-600 dark:bg-primary-900/50' : 'bg-red-100 text-red-600 dark:bg-red-900/50'}` }, e(Icon, { name: "pieChart", size: 24 })),
             e('div', { className: "flex-1" },
               e('h3', { className: "font-bold text-gray-900 dark:text-white text-sm" }, "Kesehatan Finansial"),
-              e('div', { className: "w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2 mt-2" }, e('div', { className: `h-2 rounded-full ${healthRatio < 70 ? 'bg-emerald-500' : 'bg-red-500'}`, style: { width: `${Math.min(healthRatio, 100)}%` } })),
+              e('div', { className: "w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2 mt-2" },
+                e('div', { className: `h-2 rounded-full ${healthRatio < 70 ? 'bg-primary-500' : 'bg-red-500'}`, style: { width: `${Math.min(healthRatio, 100)}%` } })
+              ),
               e('p', { className: "text-xs text-gray-500 mt-1" }, `Pengeluaran memakan ${healthRatio}% pemasukan`)
             )
           ),
 
           e('div', { className: "grid grid-cols-2 gap-4" },
-            e('button', { onClick: () => { setCatatTrigger('in'); setActiveTab('catat'); }, className: "bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-sm flex flex-col items-center justify-center gap-2 border border-gray-100 dark:border-gray-700 active:scale-95 transition-transform" }, e('div', { className: "bg-emerald-100 dark:bg-emerald-900/50 p-3 rounded-full text-emerald-600" }, e(Icon, { name: "plus", size: 24 })), e('span', { className: "text-sm font-medium text-gray-700 dark:text-gray-200" }, "Catat Masuk")),
-            e('button', { onClick: () => { setCatatTrigger('out'); setActiveTab('catat'); }, className: "bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-sm flex flex-col items-center justify-center gap-2 border border-gray-100 dark:border-gray-700 active:scale-95 transition-transform" }, e('div', { className: "bg-red-100 dark:bg-red-900/50 p-3 rounded-full text-red-600" }, e(Icon, { name: "minus", size: 24 })), e('span', { className: "text-sm font-medium text-gray-700 dark:text-gray-200" }, "Catat Keluar"))
+            e('button', { onClick: () => { setCatatTrigger('in'); setActiveTab('catat'); }, className: "bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-sm flex flex-col items-center justify-center gap-2 border border-gray-100 dark:border-gray-700 active:scale-95 transition-transform" },
+              e('div', { className: "bg-primary-100 dark:bg-primary-900/50 p-3 rounded-full text-primary-600" }, e(Icon, { name: "plus", size: 24 })),
+              e('span', { className: "text-sm font-medium text-gray-700 dark:text-gray-200" }, "Catat Masuk")
+            ),
+            e('button', { onClick: () => { setCatatTrigger('out'); setActiveTab('catat'); }, className: "bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-sm flex flex-col items-center justify-center gap-2 border border-gray-100 dark:border-gray-700 active:scale-95 transition-transform" },
+              e('div', { className: "bg-red-100 dark:bg-red-900/50 p-3 rounded-full text-red-600" }, e(Icon, { name: "minus", size: 24 })),
+              e('span', { className: "text-sm font-medium text-gray-700 dark:text-gray-200" }, "Catat Keluar")
+            )
           ),
 
           e('div', null,
-            e('div', { className: "flex justify-between items-center mb-4" }, e('h3', { className: "font-bold text-gray-900 dark:text-white" }, "Transaksi Terakhir"), e('button', { onClick: () => { setCatatTrigger(null); setActiveTab('catat'); }, className: "text-emerald-500 text-sm font-medium" }, "Lihat Semua")),
+            e('div', { className: "flex justify-between items-center mb-4" },
+              e('h3', { className: "font-bold text-gray-900 dark:text-white" }, "Transaksi Terakhir"),
+              e('button', { onClick: () => setActiveTab('catat'), className: "text-primary-500 text-sm font-medium" }, "Lihat Semua")
+            ),
             e('div', { className: "space-y-3" },
               transactions.length === 0 ? e('p', {className: "text-center text-sm text-gray-400 py-4"}, "Belum ada transaksi") :
               transactions.slice().reverse().slice(0, 5).map(t => 
-                e('div', { key: t.id, className: "bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-sm border border-gray-50 dark:border-gray-700 flex justify-between items-center" },
-                  e('div', { className: "flex items-center gap-4" },
-                    e('div', { className: `p-2 rounded-xl ${t.type === 'in' ? 'bg-emerald-100 text-emerald-600 dark:bg-emerald-900/50' : 'bg-red-100 text-red-600 dark:bg-red-900/50'}` }, e(Icon, { name: t.type === 'in' ? 'arrowDown' : 'arrowUp', size: 20 })),
-                    e('div', null, e('p', { className: "font-semibold text-gray-900 dark:text-white" }, t.note), e('p', { className: "text-xs text-gray-500 mt-0.5" }, t.date))
+                e('div', { key: t.id, onClick: () => { setActiveTab('catat'); }, className: "bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-sm border border-gray-50 dark:border-gray-700 flex justify-between items-center cursor-pointer active:scale-95 transition-transform" },
+                  e('div', { className: "flex items-center gap-3" },
+                    e('div', { className: `p-2 rounded-xl ${t.type === 'in' ? 'bg-primary-50 dark:bg-primary-950/40 text-primary-500' : 'bg-red-50 dark:bg-red-950/40 text-red-500'}` }, e(Icon, { name: t.type === 'in' ? 'arrowDown' : 'arrowUp', size: 18 })),
+                    e('div', null, e('p', { className: "font-semibold text-gray-900 dark:text-white text-sm capitalize" }, t.note), e('p', { className: "text-[11px] text-gray-500 mt-0.5" }, t.date))
                   ),
-                  e('div', { className: "text-right" },
-                    e('p', { className: `font-bold ${t.type === 'in' ? 'text-emerald-600' : 'text-red-500'}` }, `${t.type === 'in' ? '+' : '-'}${formatRp(t.amount)}`),
-                    e('p', { className: "text-[10px] text-gray-400 mt-0.5" }, t.type === 'in' ? 'Pemasukan' : 'Pengeluaran')
-                  )
+                  e('div', { className: "text-right" }, e('p', { className: `font-bold text-sm ${t.type === 'in' ? 'text-primary-500' : 'text-red-500'}` }, `${t.type === 'in' ? '+' : '-'}${formatRp(t.amount)}`), e('p', { className: "text-[10px] text-gray-400 mt-0.5" }, t.type === 'in' ? 'Pemasukan' : 'Pengeluaran'))
                 )
               )
             )
@@ -266,12 +369,14 @@
         );
       };
 
+      // C. Halaman Catat Transaksi
       const CatatComponent = () => {
-        const [isFormOpen, setIsFormOpen] = useState(catatTrigger ? true : false);
-        const [editTx, setEditTx] = useState(null); // Menyimpan state data yang mau diedit
-        
-        const [formType, setFormType] = useState(catatTrigger || 'out');
-        const [amount, setAmount] = useState('');
+        const [isFormOpen, setIsFormOpen] = useState(false);
+        const [isEditMode, setIsEditMode] = useState(false);
+        const [editId, setEditId] = useState(null);
+
+        const [formType, setFormType] = useState('out');
+        const [amountStr, setAmountStr] = useState('');
         const [date, setDate] = useState(getTodayDate());
         const [note, setNote] = useState('');
 
@@ -280,63 +385,58 @@
         const [startDate, setStartDate] = useState('');
         const [endDate, setEndDate] = useState('');
 
-        // Efek untuk memantau trigger dari halaman beranda
         useEffect(() => {
           if (catatTrigger) {
-            setIsFormOpen(true);
             setFormType(catatTrigger);
+            openAddModal();
+            setCatatTrigger(null);
           }
-        }, [catatTrigger]);
+        }, []);
 
-        const handleSave = (eEvent) => {
-          eEvent.preventDefault();
-          // Bersihkan titik sebelum disimpan
-          const parsedAmount = parseInt(amount.toString().replace(/\./g, ''), 10);
-          if (!parsedAmount || !note) {
-            alert("Nominal dan Catatan wajib diisi!");
-            return;
-          }
-          const newTx = { id: generateId(), type: formType, amount: parsedAmount, date, note };
-          
-          setTransactions([...transactions, newTx]);
-          syncToCloud('addTransaction', newTx);
-          
-          setAmount(''); setNote(''); setDate(getTodayDate());
-          setIsFormOpen(false);
-          setCatatTrigger(null);
-          showToast("Transaksi berhasil dicatat!");
-        };
+        const openAddModal = () => { setIsEditMode(false); setEditId(null); setAmountStr(''); setDate(getTodayDate()); setNote(''); setIsFormOpen(true); };
+        const openEditModal = (t) => { setIsEditMode(true); setEditId(t.id); setFormType(t.type); setAmountStr(formatNumberInput(t.amount)); setDate(t.date); setNote(t.note); setIsFormOpen(true); };
+        const closeForm = () => { setIsFormOpen(false); setCatatTrigger(null); };
 
-        const handleUpdateTx = (ev) => {
+        const handleSave = (ev) => {
           ev.preventDefault();
-          const parsedAmount = parseInt(editTx.amount.toString().replace(/\./g, ''), 10);
-          if (!parsedAmount || !editTx.note) return;
-          const updatedTx = { ...editTx, amount: parsedAmount };
+          const numAmount = parseNumberInput(amountStr);
+          if (numAmount <= 0 || !note) return;
           
-          setTransactions(transactions.map(t => t.id === updatedTx.id ? updatedTx : t));
-          syncToCloud('editTransaction', updatedTx);
-          
-          setEditTx(null);
-          showToast("Transaksi diperbarui!");
+          if (isEditMode) {
+            const updatedList = transactions.map(t => t.id === editId ? { ...t, type: formType, amount: numAmount, date, note } : t);
+            updateTransactions(updatedList);
+            addToSyncQueue('editTransaction', { id: editId, type: formType, amount: numAmount, date, note });
+            showToast("Transaksi diubah!");
+          } else {
+            const newTx = { id: generateId(), type: formType, amount: numAmount, date, note };
+            updateTransactions([...transactions, newTx]);
+            addToSyncQueue('addTransaction', newTx);
+            showToast("Transaksi dicatat!");
+          }
+          closeForm();
         };
 
-        const handleDeleteTx = (id) => {
-          setTransactions(transactions.filter(t => t.id !== id));
-          syncToCloud('deleteTransaction', { id });
-          setEditTx(null);
-          showToast("Transaksi dihapus!");
+        const handleDelete = () => {
+          if(confirm("Yakin ingin menghapus transaksi ini?")) {
+            const updatedList = transactions.filter(t => t.id !== editId);
+            updateTransactions(updatedList);
+            addToSyncQueue('deleteTransaction', { id: editId });
+            showToast("Transaksi dihapus!");
+            closeForm();
+          }
         };
 
         const filteredTx = useMemo(() => {
           return transactions.filter(t => {
-            if (timeFilter === 'harian') return new Date(t.date).toDateString() === new Date().toDateString();
-            if (timeFilter === 'mingguan') return Math.abs(new Date() - new Date(t.date)) / 86400000 <= 7;
-            if (timeFilter === 'bulanan') return new Date(t.date).getMonth() === new Date().getMonth() && new Date(t.date).getFullYear() === new Date().getFullYear();
-            if (timeFilter === 'tahunan') return new Date(t.date).getFullYear() === new Date().getFullYear();
+            const txDate = new Date(t.date); const today = new Date();
+            if (timeFilter === 'harian') return txDate.toDateString() === today.toDateString();
+            if (timeFilter === 'mingguan') return Math.abs(today - txDate) / 86400000 <= 7;
+            if (timeFilter === 'bulanan') return txDate.getMonth() === today.getMonth() && txDate.getFullYear() === today.getFullYear();
+            if (timeFilter === 'tahunan') return txDate.getFullYear() === today.getFullYear();
             if (timeFilter === 'kustom' && startDate && endDate) {
-              const d = new Date(t.date); const s = new Date(startDate); const e = new Date(endDate);
-              d.setHours(0,0,0,0); s.setHours(0,0,0,0); e.setHours(0,0,0,0);
-              return d >= s && d <= e;
+              const start = new Date(startDate); const end = new Date(endDate);
+              txDate.setHours(0,0,0,0); start.setHours(0,0,0,0); end.setHours(0,0,0,0);
+              return txDate >= start && txDate <= end;
             }
             return true;
           }).reverse();
@@ -344,11 +444,11 @@
 
         const handleApplyCustomRange = (ev) => {
           ev.preventDefault();
-          if (startDate && endDate) { setTimeFilter('kustom'); setShowRangeModal(false); }
+          if (!startDate || !endDate) return;
+          setTimeFilter('kustom'); setShowRangeModal(false);
         };
 
         return e('div', { className: "h-full flex flex-col relative bg-gray-50 dark:bg-gray-900 animate-fade-in" },
-          
           e('div', { className: "p-4 flex justify-between items-center border-b border-gray-100 dark:border-gray-800" },
             e('div', null, e('h2', { className: "text-2xl font-bold text-gray-900 dark:text-white" }, "Buku Kas"), e('p', { className: "text-xs text-gray-500 capitalize" }, `Filter: ${timeFilter === 'kustom' ? `${startDate} s/d ${endDate}` : timeFilter}`)),
             e('button', { onClick: () => setShowRangeModal(true), className: "p-2 bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 text-gray-600 dark:text-gray-300 active:scale-95 transition-transform" }, e(Icon, { name: "calendar", size: 22 }))
@@ -357,66 +457,49 @@
           e('div', { className: "flex-1 overflow-y-auto no-scrollbar px-4 pb-36" },
             e('div', { className: "mt-4 p-5 rounded-3xl bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-800 shadow-sm relative overflow-hidden" },
               e('p', { className: "text-xs text-gray-400 font-medium" }, "Total Kas Keseluruhan"),
-              e('h3', { className: `text-3xl font-extrabold mt-1 ${saldoAktif >= 0 ? 'text-emerald-500' : 'text-red-500'}` }, formatRp(saldoAktif)),
+              e('h3', { className: `text-3xl font-extrabold mt-1 ${saldoAktif >= 0 ? 'text-primary-500' : 'text-red-500'}` }, formatRp(saldoAktif)),
               e('div', { className: "grid grid-cols-2 gap-4 mt-4 pt-4 border-t border-gray-50 dark:border-gray-700/50" },
-                e('div', null, e('p', { className: "text-[10px] text-gray-400 font-medium" }, "Pemasukan"), e('p', { className: "text-sm font-bold text-emerald-600 dark:text-emerald-400" }, formatRp(totalPemasukan))),
+                e('div', null, e('p', { className: "text-[10px] text-gray-400 font-medium" }, "Pemasukan"), e('p', { className: "text-sm font-bold text-primary-600 dark:text-primary-400" }, formatRp(totalPemasukan))),
                 e('div', null, e('p', { className: "text-[10px] text-gray-400 font-medium" }, "Pengeluaran"), e('p', { className: "text-sm font-bold text-red-500" }, formatRp(totalPengeluaran)))
               )
             ),
 
             e('div', { className: "flex gap-2 my-5 overflow-x-auto no-scrollbar py-1" },
               [{ id: 'semua', label: 'Semua' }, { id: 'harian', label: 'Harian' }, { id: 'mingguan', label: 'Mingguan' }, { id: 'bulanan', label: 'Bulanan' }, { id: 'tahunan', label: 'Tahunan' }].map(f => 
-                e('button', { key: f.id, onClick: () => setTimeFilter(f.id), className: `px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap transition-all active:scale-95 ${timeFilter === f.id ? 'bg-emerald-500 text-white shadow-md shadow-emerald-200 dark:shadow-none' : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 border border-gray-100 dark:border-gray-700'}` }, f.label)
+                e('button', { key: f.id, onClick: () => setTimeFilter(f.id), className: `px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap transition-all active:scale-95 ${timeFilter === f.id ? 'bg-primary-500 text-white shadow-md shadow-primary-200 dark:shadow-none' : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 border border-gray-100 dark:border-gray-700'}` }, f.label)
               )
             ),
 
-            // LIST TRANSAKSI
             e('div', { className: "space-y-3" },
               filteredTx.length === 0 ? e('div', { className: "text-center py-12 text-gray-400" }, e(Icon, { name: "pieChart", size: 40, className: "mx-auto mb-2 opacity-30" }), e('p', { className: "text-sm" }, "Tidak ada transaksi dalam filter ini")) :
               filteredTx.map(t => 
-                e('div', { key: t.id, onClick: () => setEditTx({ ...t, amount: formatNumberInput(t.amount.toString()) }), className: "bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-sm border border-gray-50 dark:border-gray-700/50 flex justify-between items-center cursor-pointer active:scale-95 transition-transform" },
+                e('div', { key: t.id, onClick: () => openEditModal(t), className: "bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-sm border border-gray-50 dark:border-gray-700/50 flex justify-between items-center cursor-pointer active:scale-95 transition-transform" },
                   e('div', { className: "flex items-center gap-3" },
-                    e('div', { className: `p-2 rounded-xl ${t.type === 'in' ? 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-500' : 'bg-red-50 dark:bg-red-950/40 text-red-500'}` }, e(Icon, { name: t.type === 'in' ? 'arrowDown' : 'arrowUp', size: 18 })),
-                    e('div', null, e('p', { className: "font-semibold text-gray-900 dark:text-white text-sm" }, t.note), e('p', { className: "text-[11px] text-gray-500 mt-0.5" }, t.date))
+                    e('div', { className: `p-2 rounded-xl ${t.type === 'in' ? 'bg-primary-50 dark:bg-primary-950/40 text-primary-500' : 'bg-red-50 dark:bg-red-950/40 text-red-500'}` }, e(Icon, { name: t.type === 'in' ? 'arrowDown' : 'arrowUp', size: 18 })),
+                    e('div', null, e('p', { className: "font-semibold text-gray-900 dark:text-white text-sm capitalize" }, t.note), e('p', { className: "text-[11px] text-gray-500 mt-0.5" }, t.date))
                   ),
-                  e('div', { className: "text-right" }, e('p', { className: `font-bold text-sm ${t.type === 'in' ? 'text-emerald-500' : 'text-red-500'}` }, `${t.type === 'in' ? '+' : '-'}${formatRp(t.amount)}`), e('p', { className: "text-[10px] text-gray-400 mt-0.5" }, t.type === 'in' ? 'Pemasukan' : 'Pengeluaran'))
+                  e('div', { className: "text-right" }, e('p', { className: `font-bold text-sm ${t.type === 'in' ? 'text-primary-500' : 'text-red-500'}` }, `${t.type === 'in' ? '+' : '-'}${formatRp(t.amount)}`), e('p', { className: "text-[10px] text-gray-400 mt-0.5" }, t.type === 'in' ? 'Pemasukan' : 'Pengeluaran'))
                 )
               )
             )
           ),
 
           e('div', { className: "absolute bottom-16 left-0 w-full p-4 bg-gradient-to-t from-gray-50 via-gray-50 to-transparent dark:from-gray-900 dark:via-gray-900 z-40" },
-            e('button', { onClick: () => setIsFormOpen(true), className: "w-full py-4 bg-emerald-500 hover:bg-emerald-600 active:scale-95 transition-all text-white font-extrabold rounded-2xl shadow-lg shadow-emerald-100 dark:shadow-none flex items-center justify-center gap-2" }, e(Icon, { name: "plus", size: 20 }), "Catat Transaksi Baru")
+            e('button', { onClick: openAddModal, className: "w-full py-4 bg-primary-500 hover:bg-primary-600 active:scale-95 transition-all text-white font-extrabold rounded-2xl shadow-lg shadow-primary-100 dark:shadow-none flex items-center justify-center gap-2" }, e(Icon, { name: "plus", size: 20 }), "Catat Transaksi Baru")
           ),
 
-          // MODAL TAMBAH (CENTERED)
           isFormOpen && e('div', { className: "fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fade-in" },
-            e('div', { className: "absolute inset-0", onClick: () => { setIsFormOpen(false); setCatatTrigger(null); } }),
-            e('div', { className: "w-full max-w-xs sm:max-w-sm bg-white dark:bg-gray-800 rounded-3xl p-6 shadow-2xl relative z-10 animate-fade-in" },
-              e('div', { className: "flex justify-between items-center mb-6" }, e('h3', { className: "text-xl font-bold text-gray-900 dark:text-white" }, "Catat Keuangan"), e('button', { onClick: () => { setIsFormOpen(false); setCatatTrigger(null); }, className: "text-gray-400 hover:text-gray-600 text-sm font-bold" }, "Batal")),
-              e('div', { className: "flex bg-gray-100 dark:bg-gray-900 rounded-xl p-1 mb-5" }, e('button', { onClick: () => setFormType('out'), className: `flex-1 py-2.5 rounded-lg text-sm font-bold transition-all ${formType === 'out' ? 'bg-white dark:bg-gray-700 text-red-500 shadow-sm' : 'text-gray-500'}` }, "Pengeluaran"), e('button', { onClick: () => setFormType('in'), className: `flex-1 py-2.5 rounded-lg text-sm font-bold transition-all ${formType === 'in' ? 'bg-white dark:bg-gray-700 text-emerald-500 shadow-sm' : 'text-gray-500'}` }, "Pemasukan")),
+            e('div', { className: "absolute inset-0", onClick: closeForm }),
+            e('div', { className: "w-full max-w-sm bg-white dark:bg-gray-800 rounded-3xl p-6 shadow-2xl relative z-10 animate-fade-in" },
+              e('div', { className: "flex justify-between items-center mb-6" }, e('h3', { className: "text-xl font-bold text-gray-900 dark:text-white" }, isEditMode ? "Ubah Catatan" : "Catat Keuangan"), e('button', { onClick: closeForm, className: "text-gray-400 hover:text-gray-600 text-sm font-bold" }, "Batal")),
+              e('div', { className: "flex bg-gray-100 dark:bg-gray-900 rounded-xl p-1 mb-5" }, e('button', { onClick: () => setFormType('out'), className: `flex-1 py-2.5 rounded-lg text-sm font-bold transition-all ${formType === 'out' ? 'bg-white dark:bg-gray-700 text-red-500 shadow-sm' : 'text-gray-500'}` }, "Pengeluaran"), e('button', { onClick: () => setFormType('in'), className: `flex-1 py-2.5 rounded-lg text-sm font-bold transition-all ${formType === 'in' ? 'bg-white dark:bg-gray-700 text-primary-500 shadow-sm' : 'text-gray-500'}` }, "Pemasukan")),
               e('form', { onSubmit: handleSave, className: "space-y-4" },
-                e('div', { className: "relative" }, e('span', { className: "absolute left-4 top-3.5 text-gray-400 font-extrabold text-lg" }, "Rp"), e('input', { type: "text", inputMode: "numeric", value: amount, onChange: ev => setAmount(formatNumberInput(ev.target.value)), placeholder: "0", className: "w-full bg-gray-50 dark:bg-gray-900 border-none pl-12 pr-4 py-3.5 rounded-2xl text-2xl font-black focus:ring-2 focus:ring-emerald-500 dark:text-white outline-none", required: true, autoFocus: true })),
-                e('input', { type: "text", value: note, onChange: ev => setNote(ev.target.value), placeholder: "Keterangan / Catatan", className: "w-full bg-gray-50 dark:bg-gray-900 border-none p-3.5 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 dark:text-white outline-none", required: true }),
-                e('input', { type: "date", value: date, onChange: ev => setDate(ev.target.value), className: "w-full bg-gray-50 dark:bg-gray-900 border-none p-3.5 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 dark:text-white text-gray-600 outline-none", required: true }),
-                e('button', { type: "submit", className: `w-full py-4 mt-2 rounded-2xl text-white font-extrabold active:scale-95 transition-transform ${formType === 'in' ? 'bg-emerald-500 shadow-md shadow-emerald-200 dark:shadow-none' : 'bg-red-500 shadow-md shadow-red-200 dark:shadow-none'}` }, "Simpan Transaksi")
-              )
-            )
-          ),
-
-          // MODAL EDIT TRANSAKSI
-          editTx && e('div', { className: "fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fade-in" },
-            e('div', { className: "absolute inset-0", onClick: () => setEditTx(null) }),
-            e('div', { className: "w-full max-w-xs sm:max-w-sm bg-white dark:bg-gray-800 rounded-3xl p-6 shadow-2xl relative z-10 animate-fade-in" },
-              e('div', { className: "flex justify-between items-center mb-6" }, e('h3', { className: "text-xl font-bold text-gray-900 dark:text-white" }, "Edit Transaksi"), e('button', { onClick: () => setEditTx(null), className: "text-gray-400 hover:text-gray-600 text-sm font-bold" }, "Batal")),
-              e('div', { className: "flex bg-gray-100 dark:bg-gray-900 rounded-xl p-1 mb-5" }, e('button', { onClick: () => setEditTx({...editTx, type: 'out'}), className: `flex-1 py-2.5 rounded-lg text-sm font-bold transition-all ${editTx.type === 'out' ? 'bg-white dark:bg-gray-700 text-red-500 shadow-sm' : 'text-gray-500'}` }, "Pengeluaran"), e('button', { onClick: () => setEditTx({...editTx, type: 'in'}), className: `flex-1 py-2.5 rounded-lg text-sm font-bold transition-all ${editTx.type === 'in' ? 'bg-white dark:bg-gray-700 text-emerald-500 shadow-sm' : 'text-gray-500'}` }, "Pemasukan")),
-              e('form', { onSubmit: handleUpdateTx, className: "space-y-4" },
-                e('div', { className: "relative" }, e('span', { className: "absolute left-4 top-3.5 text-gray-400 font-extrabold text-lg" }, "Rp"), e('input', { type: "text", inputMode: "numeric", value: editTx.amount, onChange: ev => setEditTx({...editTx, amount: formatNumberInput(ev.target.value)}), placeholder: "0", className: "w-full bg-gray-50 dark:bg-gray-900 border-none pl-12 pr-4 py-3.5 rounded-2xl text-2xl font-black focus:ring-2 focus:ring-emerald-500 dark:text-white outline-none", required: true })),
-                e('input', { type: "text", value: editTx.note, onChange: ev => setEditTx({...editTx, note: ev.target.value}), placeholder: "Keterangan", className: "w-full bg-gray-50 dark:bg-gray-900 border-none p-3.5 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 dark:text-white outline-none", required: true }),
-                e('input', { type: "date", value: editTx.date, onChange: ev => setEditTx({...editTx, date: ev.target.value}), className: "w-full bg-gray-50 dark:bg-gray-900 border-none p-3.5 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 dark:text-white text-gray-600 outline-none", required: true }),
-                e('div', { className: "flex gap-3 mt-4" },
-                  e('button', { type: "button", onClick: () => handleDeleteTx(editTx.id), className: "flex-1 py-4 rounded-2xl text-red-500 bg-red-50 dark:bg-red-900/20 font-extrabold active:scale-95 transition-transform" }, "Hapus"),
-                  e('button', { type: "submit", className: `flex-[2] py-4 rounded-2xl text-white font-extrabold active:scale-95 transition-transform ${editTx.type === 'in' ? 'bg-emerald-500 shadow-md shadow-emerald-200 dark:shadow-none' : 'bg-red-500 shadow-md shadow-red-200 dark:shadow-none'}` }, "Simpan")
+                e('div', { className: "relative" }, e('span', { className: "absolute left-4 top-3.5 text-gray-400 font-extrabold text-lg" }, "Rp"), e('input', { type: "text", inputMode: "numeric", value: amountStr, onChange: ev => setAmountStr(formatNumberInput(ev.target.value)), placeholder: "0", className: "w-full bg-gray-50 dark:bg-gray-900 border-none pl-12 pr-4 py-3.5 rounded-2xl text-2xl font-black focus:ring-2 focus:ring-primary-500 dark:text-white outline-none", required: true, autoFocus: true })),
+                e('input', { type: "text", value: note, onChange: ev => setNote(ev.target.value), placeholder: "Catatan (Makan, dll)", className: "w-full bg-gray-50 dark:bg-gray-900 border-none p-3.5 rounded-xl text-sm focus:ring-2 focus:ring-primary-500 dark:text-white outline-none", required: true }),
+                e('input', { type: "date", value: date, onChange: ev => setDate(ev.target.value), className: "w-full bg-gray-50 dark:bg-gray-900 border-none p-3.5 rounded-xl text-sm focus:ring-2 focus:ring-primary-500 dark:text-white text-gray-600 outline-none", required: true }),
+                e('div', { className: "flex gap-2 pt-2" },
+                  isEditMode && e('button', { type: "button", onClick: handleDelete, className: "py-4 px-5 rounded-2xl text-red-500 bg-red-50 hover:bg-red-100 font-extrabold active:scale-95 transition-transform" }, e(Icon, { name: "minus", size: 20 })),
+                  e('button', { type: "submit", className: `flex-1 py-4 rounded-2xl text-white font-extrabold active:scale-95 transition-transform ${formType === 'in' ? 'bg-primary-500' : 'bg-red-500'}` }, "Simpan")
                 )
               )
             )
@@ -426,27 +509,29 @@
             e('div', { className: "bg-white dark:bg-gray-800 w-full max-w-xs rounded-3xl p-6 shadow-2xl relative animate-fade-in" },
               e('h3', { className: "text-lg font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2" }, e(Icon, { name: "calendar", size: 20 }), "Pilih Range Tanggal"),
               e('form', { onSubmit: handleApplyCustomRange, className: "space-y-4" },
-                e('div', null, e('label', { className: "text-xs text-gray-400 block mb-1 font-bold" }, "Dari Tanggal"), e('input', { type: "date", value: startDate, onChange: ev => setStartDate(ev.target.value), className: "w-full bg-gray-50 dark:bg-gray-900 border-none p-3 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 dark:text-white outline-none", required: true })),
-                e('div', null, e('label', { className: "text-xs text-gray-400 block mb-1 font-bold" }, "Sampai Tanggal"), e('input', { type: "date", value: endDate, onChange: ev => setEndDate(ev.target.value), className: "w-full bg-gray-50 dark:bg-gray-900 border-none p-3 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 dark:text-white outline-none", required: true })),
-                e('div', { className: "flex gap-2 pt-2" }, e('button', { type: "button", onClick: () => setShowRangeModal(false), className: "flex-1 py-2.5 rounded-xl border border-gray-100 dark:border-gray-700 text-gray-500 dark:text-gray-400 text-sm font-bold" }, "Batal"), e('button', { type: "submit", className: "flex-1 py-2.5 rounded-xl bg-emerald-500 text-white text-sm font-bold" }, "Terapkan"))
+                e('div', null, e('label', { className: "text-xs text-gray-400 block mb-1 font-bold" }, "Dari Tanggal"), e('input', { type: "date", value: startDate, onChange: ev => setStartDate(ev.target.value), className: "w-full bg-gray-50 dark:bg-gray-900 border-none p-3 rounded-xl text-sm focus:ring-2 focus:ring-primary-500 dark:text-white outline-none", required: true })),
+                e('div', null, e('label', { className: "text-xs text-gray-400 block mb-1 font-bold" }, "Sampai Tanggal"), e('input', { type: "date", value: endDate, onChange: ev => setEndDate(ev.target.value), className: "w-full bg-gray-50 dark:bg-gray-900 border-none p-3 rounded-xl text-sm focus:ring-2 focus:ring-primary-500 dark:text-white outline-none", required: true })),
+                e('div', { className: "flex gap-2 pt-2" }, e('button', { type: "button", onClick: () => setShowRangeModal(false), className: "flex-1 py-2.5 rounded-xl border border-gray-100 dark:border-gray-700 text-gray-500 dark:text-gray-400 text-sm font-bold" }, "Batal"), e('button', { type: "submit", className: "flex-1 py-2.5 rounded-xl bg-primary-500 text-white text-sm font-bold" }, "Terapkan"))
               )
             )
           )
         );
       };
 
+      // D. Halaman HUTANG PIUTANG
       const HutangComponent = () => {
         const [isAddContactOpen, setIsAddContactOpen] = useState(false);
         const [contactNameInput, setContactNameInput] = useState('');
         const [contactPhoneInput, setContactPhoneInput] = useState('');
 
-        const [isAddDebtOpen, setIsAddDebtOpen] = useState(false);
-        const [editDebt, setEditDebt] = useState(null);
-        
+        const [isFormOpen, setIsFormOpen] = useState(false);
+        const [isEditMode, setIsEditMode] = useState(false);
+        const [editId, setEditId] = useState(null);
+
         const [formType, setFormType] = useState('piutang');
-        const [amount, setAmount] = useState('');
-        const [note, setNote] = useState('');
+        const [amountStr, setAmountStr] = useState('');
         const [date, setDate] = useState(getTodayDate());
+        const [note, setNote] = useState('');
         
         const personSummary = useMemo(() => {
           const summary = {};
@@ -464,135 +549,104 @@
           const trimmedPhone = contactPhoneInput.trim();
           if (!trimmedName || !trimmedPhone) return;
 
-          if (contacts.some(c => c.name.toLowerCase() === trimmedName.toLowerCase())) {
-            alert('Nama kontak sudah terdaftar!');
-            return;
-          }
+          if (contacts.some(c => c.name.toLowerCase() === trimmedName.toLowerCase())) { alert('Nama kontak sudah terdaftar!'); return; }
 
           const newContact = { name: trimmedName, phone: trimmedPhone };
-          setContacts([...contacts, newContact]);
-          syncToCloud('addContact', newContact);
+          updateContacts([...contacts, newContact]);
+          addToSyncQueue('addContact', newContact);
 
           setContactNameInput(''); setContactPhoneInput('');
           setIsAddContactOpen(false);
-          showToast('Kontak disimpan!');
+        };
+
+        const openAddModal = () => { setIsEditMode(false); setEditId(null); setAmountStr(''); setDate(getTodayDate()); setNote(''); setIsFormOpen(true); };
+        const openEditModal = (d) => { setIsEditMode(true); setEditId(d.id); setFormType(d.type); setAmountStr(formatNumberInput(d.amount)); setDate(d.date); setNote(d.note); setIsFormOpen(true); };
+        const closeForm = () => { setIsFormOpen(false); };
+
+        const handleSaveDebt = (ev) => {
+          ev.preventDefault();
+          const numAmount = parseNumberInput(amountStr);
+          if (numAmount <= 0 || !note) return;
+          
+          if (isEditMode) {
+            const updated = debts.map(d => d.id === editId ? { ...d, type: formType, amount: numAmount, date, note } : d);
+            updateDebts(updated);
+            addToSyncQueue('editDebt', { id: editId, type: formType, amount: numAmount, date, note });
+            showToast("Catatan diubah!");
+          } else {
+            const newDebt = { id: generateId(), person: selectedPerson, type: formType, amount: numAmount, date, note };
+            updateDebts([...debts, newDebt]);
+            addToSyncQueue('addDebt', newDebt);
+            showToast("Catatan disimpan!");
+          }
+          closeForm();
+        };
+
+        const handleDeleteDebt = () => {
+          if(confirm("Hapus catatan ini?")) {
+            const updated = debts.filter(d => d.id !== editId);
+            updateDebts(updated);
+            addToSyncQueue('deleteDebt', { id: editId });
+            showToast("Catatan dihapus!");
+            closeForm();
+          }
+        };
+
+        const handlePelunasan = () => {
+          const netBalance = personSummary[selectedPerson] || 0;
+          if (netBalance === 0) { showToast("Sudah Lunas!"); return; }
+          
+          const lunasType = netBalance > 0 ? 'hutang' : 'piutang'; // Lawan transaksinya
+          const newDebt = { id: generateId(), person: selectedPerson, type: lunasType, amount: Math.abs(netBalance), date: getTodayDate(), note: 'Pelunasan Otomatis' };
+          
+          updateDebts([...debts, newDebt]);
+          addToSyncQueue('addDebt', newDebt);
+          showToast("Berhasil Dilunasi!");
         };
 
         if (selectedPerson) {
           const personDebts = debts.filter(d => d.person === selectedPerson).reverse();
           const netBalance = personSummary[selectedPerson] || 0;
 
-          const handleAddDebt = (ev) => {
-            ev.preventDefault();
-            const parsedAmount = parseInt(amount.toString().replace(/\./g, ''), 10);
-            if (!parsedAmount || !note) return;
-            const newDebt = { id: generateId(), person: selectedPerson, type: formType, amount: parsedAmount, date, note };
-            
-            setDebts([...debts, newDebt]);
-            syncToCloud('addDebt', newDebt);
-
-            setAmount(''); setNote(''); setDate(getTodayDate());
-            setIsAddDebtOpen(false);
-            showToast("Catatan disimpan!");
-          };
-
-          const handleUpdateDebt = (ev) => {
-            ev.preventDefault();
-            const parsedAmount = parseInt(editDebt.amount.toString().replace(/\./g, ''), 10);
-            if (!parsedAmount || !editDebt.note) return;
-            const updatedDebt = { ...editDebt, amount: parsedAmount };
-            
-            setDebts(debts.map(d => d.id === updatedDebt.id ? updatedDebt : d));
-            syncToCloud('editDebt', updatedDebt);
-            setEditDebt(null);
-            showToast("Catatan diperbarui!");
-          };
-
-          const handleDeleteDebt = (id) => {
-            setDebts(debts.filter(d => d.id !== id));
-            syncToCloud('deleteDebt', { id });
-            setEditDebt(null);
-            showToast("Catatan dihapus!");
-          };
-
-          const handlePelunasan = () => {
-            if (netBalance === 0) return;
-            const type = netBalance > 0 ? 'hutang' : 'piutang'; // Lawan dari saldo untuk pelunasan
-            const newDebt = { id: generateId(), person: selectedPerson, type, amount: Math.abs(netBalance), date: getTodayDate(), note: 'Pelunasan' };
-            setDebts([...debts, newDebt]);
-            syncToCloud('addDebt', newDebt);
-            showToast("Pelunasan dicatat!");
-          };
-
-          return e('div', { className: "h-full flex flex-col relative bg-gray-50 dark:bg-gray-900 animate-fade-in" },
-            e('div', { className: "p-4 border-b border-gray-100 dark:border-gray-800" },
-              e('button', { onClick: () => setSelectedPerson(null), className: "flex items-center text-gray-500 hover:text-gray-800 dark:hover:text-white" }, e(Icon, { name: "chevronLeft", size: 20, className: "mr-1" }), "Kembali")
+          return e('div', { className: "p-4 pb-24 h-full overflow-y-auto no-scrollbar animate-fade-in" },
+            e('button', { onClick: () => setSelectedPerson(null), className: "flex items-center text-gray-500 mb-6 hover:text-gray-800 dark:hover:text-white" }, e(Icon, { name: "chevronLeft", size: 20, className: "mr-1" }), "Kembali"),
+            e('div', {className: "flex justify-between items-center mb-6"},
+              e('div', {className: "flex items-center gap-3"},
+                e('div', {className: "w-12 h-12 bg-gray-800 text-white dark:bg-white dark:text-gray-900 rounded-full flex items-center justify-center font-bold text-lg uppercase"}, selectedPerson.charAt(0)),
+                e('h2', { className: "text-2xl font-bold text-gray-900 dark:text-white" }, selectedPerson)
+              ),
+              netBalance !== 0 && e('button', { onClick: handlePelunasan, className: "bg-primary-100 text-primary-700 px-3 py-1.5 rounded-lg text-sm font-bold active:scale-95 transition-transform" }, "Pelunasan")
             ),
+            e('div', { className: `p-5 rounded-2xl mb-6 border shadow-sm ${netBalance > 0 ? 'bg-primary-50 border-primary-100 dark:bg-primary-900/30 dark:border-primary-800' : netBalance < 0 ? 'bg-red-50 border-red-100 dark:bg-red-900/30 dark:border-red-800' : 'bg-gray-100 border-gray-200 dark:bg-gray-800 dark:border-gray-700'}` },
+              e('p', { className: `text-sm mb-1 font-medium ${netBalance > 0 ? 'text-primary-700 dark:text-primary-400' : netBalance < 0 ? 'text-red-700 dark:text-red-400' : 'text-gray-600 dark:text-gray-400'}` }, netBalance > 0 ? `${selectedPerson} berhutang ke Anda:` : netBalance < 0 ? `Anda berhutang ke ${selectedPerson}:` : 'Status Lunas (Rp 0)'),
+              e('p', { className: `text-3xl font-extrabold ${netBalance > 0 ? 'text-primary-600' : netBalance < 0 ? 'text-red-600' : 'text-gray-800 dark:text-white'}` }, formatRp(Math.abs(netBalance)))
+            ),
+            e('button', { onClick: openAddModal, className: "w-full py-4 mb-6 bg-gray-900 dark:bg-primary-600 text-white font-bold rounded-2xl flex justify-center items-center gap-2 active:scale-95" }, e(Icon, { name: "plus", size: 20 }), "Tambah Catatan Baru"),
             
-            e('div', { className: "flex-1 overflow-y-auto no-scrollbar px-4 pb-36" },
-              e('div', {className: "flex items-center justify-between mt-4 mb-6"},
+            e('h3', { className: "font-bold text-gray-900 dark:text-white mb-3" }, "Riwayat Bersama ", selectedPerson),
+            e('div', { className: "space-y-3 pb-6" },
+              personDebts.length === 0 ? e('p', {className: "text-center text-sm text-gray-400 py-4"}, "Belum ada riwayat") :
+              personDebts.map(d => e('div', { key: d.id, onClick: () => openEditModal(d), className: "bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-sm border border-gray-50 dark:border-gray-700 flex justify-between items-center cursor-pointer active:scale-95 transition-transform" }, 
                 e('div', {className: "flex items-center gap-3"},
-                  e('div', {className: "w-12 h-12 bg-gray-800 text-white dark:bg-white dark:text-gray-900 rounded-full flex items-center justify-center font-bold text-lg uppercase"}, selectedPerson.charAt(0)),
-                  e('h2', { className: "text-2xl font-bold text-gray-900 dark:text-white" }, selectedPerson)
-                ),
-                netBalance !== 0 && e('button', { onClick: handlePelunasan, className: "px-4 py-2 bg-emerald-100 text-emerald-600 dark:bg-emerald-900/50 dark:text-emerald-400 font-bold text-sm rounded-xl active:scale-95 transition-transform" }, "Pelunasan")
-              ),
-              
-              e('div', { className: `p-5 rounded-2xl mb-6 border shadow-sm ${netBalance > 0 ? 'bg-emerald-50 border-emerald-100 dark:bg-emerald-900/30 dark:border-emerald-800' : netBalance < 0 ? 'bg-red-50 border-red-100 dark:bg-red-900/30 dark:border-red-800' : 'bg-gray-100 border-gray-200 dark:bg-gray-800 dark:border-gray-700'}` },
-                e('p', { className: `text-sm mb-1 font-medium ${netBalance > 0 ? 'text-emerald-700 dark:text-emerald-400' : netBalance < 0 ? 'text-red-700 dark:text-red-400' : 'text-gray-600 dark:text-gray-400'}` }, netBalance > 0 ? `${selectedPerson} berhutang ke Anda:` : netBalance < 0 ? `Anda berhutang ke ${selectedPerson}:` : 'Status Lunas (Rp 0)'),
-                e('p', { className: `text-3xl font-extrabold ${netBalance > 0 ? 'text-emerald-600' : netBalance < 0 ? 'text-red-600' : 'text-gray-800 dark:text-white'}` }, formatRp(Math.abs(netBalance)))
-              ),
-
-              e('h3', { className: "font-bold text-gray-900 dark:text-white mb-3" }, "Riwayat Transaksi"),
-              e('div', { className: "space-y-3 pb-6" },
-                personDebts.length === 0 ? e('p', {className: "text-center text-sm text-gray-400 py-4"}, "Belum ada riwayat hutang piutang") :
-                personDebts.map(d => 
-                  e('div', { key: d.id, onClick: () => setEditDebt({...d, amount: formatNumberInput(d.amount.toString())}), className: "bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-sm border border-gray-50 dark:border-gray-700 flex justify-between items-center cursor-pointer active:scale-95 transition-transform" },
-                    e('div', { className: "flex items-center gap-3" },
-                      e('div', { className: `p-2 rounded-xl ${d.type === 'piutang' ? 'bg-emerald-50 text-emerald-500 dark:bg-emerald-950/40' : 'bg-red-50 text-red-500 dark:bg-red-950/40'}` }, e(Icon, { name: d.type === 'piutang' ? 'arrowUp' : 'arrowDown', size: 18 })),
-                      e('div', null, e('p', { className: "font-semibold text-gray-900 dark:text-white text-sm capitalize" }, d.note), e('p', { className: "text-xs text-gray-500 mt-0.5" }, d.date))
-                    ),
-                    e('div', { className: "text-right" },
-                      e('p', { className: `font-bold text-sm ${d.type === 'piutang' ? 'text-emerald-500' : 'text-red-500'}` }, `${d.type === 'piutang' ? '+' : '-'}${formatRp(d.amount)}`),
-                      e('p', { className: "text-[10px] text-gray-400 mt-0.5" }, d.type === 'piutang' ? 'Saya Meminjamkan' : 'Hutang Saya')
-                    )
-                  )
-                )
-              )
+                  e('div', { className: `p-2 rounded-xl ${d.type === 'piutang' ? 'bg-primary-50 dark:bg-primary-950/40 text-primary-500' : 'bg-red-50 dark:bg-red-950/40 text-red-500'}` }, e(Icon, { name: d.type === 'piutang' ? 'arrowUp' : 'arrowDown', size: 18 })),
+                  e('div', null, e('p', { className: "font-semibold text-gray-900 dark:text-white text-sm capitalize" }, d.note), e('p', { className: "text-[11px] text-gray-500 mt-0.5" }, d.date))
+                ), 
+                e('div', {className: "text-right"}, e('p', { className: `font-bold text-sm ${d.type === 'piutang' ? 'text-primary-500' : 'text-red-500'}` }, `${formatRp(d.amount)}`), e('p', { className: "text-[10px] text-gray-400 mt-0.5" }, d.type === 'piutang' ? 'Saya Pinjamkan' : 'Hutang Saya'))
+              ))
             ),
 
-            e('div', { className: "absolute bottom-16 left-0 w-full p-4 bg-gradient-to-t from-gray-50 via-gray-50 to-transparent dark:from-gray-900 dark:via-gray-900 z-40" },
-              e('button', { onClick: () => setIsAddDebtOpen(true), className: "w-full py-4 bg-emerald-500 hover:bg-emerald-600 active:scale-95 transition-all text-white font-extrabold rounded-2xl shadow-lg shadow-emerald-100 dark:shadow-none flex items-center justify-center gap-2" }, e(Icon, { name: "plus", size: 20 }), "Catat Pinjaman Baru")
-            ),
-
-            // MODAL TAMBAH CATATAN
-            isAddDebtOpen && e('div', { className: "fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fade-in" },
-              e('div', { className: "absolute inset-0", onClick: () => setIsAddDebtOpen(false) }),
-              e('div', { className: "w-full max-w-xs sm:max-w-sm bg-white dark:bg-gray-800 rounded-3xl p-6 shadow-2xl relative z-10 animate-fade-in" },
-                e('div', { className: "flex justify-between items-center mb-6" }, e('h3', { className: "text-xl font-bold text-gray-900 dark:text-white" }, "Catat Transaksi"), e('button', { onClick: () => setIsAddDebtOpen(false), className: "text-gray-400 hover:text-gray-600 text-sm font-bold" }, "Batal")),
-                e('div', { className: "flex bg-gray-100 dark:bg-gray-900 rounded-xl p-1 mb-5" }, e('button', { onClick: () => setFormType('piutang'), className: `flex-1 py-2.5 rounded-lg text-sm font-bold transition-all ${formType === 'piutang' ? 'bg-white dark:bg-gray-700 text-emerald-500 shadow-sm' : 'text-gray-500'}` }, "Saya Pinjamkan"), e('button', { onClick: () => setFormType('hutang'), className: `flex-1 py-2.5 rounded-lg text-sm font-bold transition-all ${formType === 'hutang' ? 'bg-white dark:bg-gray-700 text-red-500 shadow-sm' : 'text-gray-500'}` }, "Saya Meminjam")),
-                e('form', { onSubmit: handleAddDebt, className: "space-y-4" },
-                  e('div', { className: "relative" }, e('span', { className: "absolute left-4 top-3.5 text-gray-400 font-extrabold text-lg" }, "Rp"), e('input', { type: "text", inputMode: "numeric", value: amount, onChange: ev => setAmount(formatNumberInput(ev.target.value)), placeholder: "0", className: "w-full bg-gray-50 dark:bg-gray-900 border-none pl-12 pr-4 py-3.5 rounded-2xl text-2xl font-black focus:ring-2 focus:ring-emerald-500 dark:text-white outline-none", required: true, autoFocus: true })),
-                  e('input', { type: "text", value: note, onChange: ev => setNote(ev.target.value), placeholder: "Keterangan", className: "w-full bg-gray-50 dark:bg-gray-900 border-none p-3.5 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 dark:text-white outline-none", required: true }),
-                  e('input', { type: "date", value: date, onChange: ev => setDate(ev.target.value), className: "w-full bg-gray-50 dark:bg-gray-900 border-none p-3.5 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 dark:text-white text-gray-600 outline-none", required: true }),
-                  e('button', { type: "submit", className: `w-full py-4 mt-2 rounded-2xl text-white font-extrabold active:scale-95 transition-transform ${formType === 'piutang' ? 'bg-emerald-500 shadow-md shadow-emerald-200 dark:shadow-none' : 'bg-red-500 shadow-md shadow-red-200 dark:shadow-none'}` }, "Simpan")
-                )
-              )
-            ),
-
-            // MODAL EDIT CATATAN
-            editDebt && e('div', { className: "fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fade-in" },
-              e('div', { className: "absolute inset-0", onClick: () => setEditDebt(null) }),
-              e('div', { className: "w-full max-w-xs sm:max-w-sm bg-white dark:bg-gray-800 rounded-3xl p-6 shadow-2xl relative z-10 animate-fade-in" },
-                e('div', { className: "flex justify-between items-center mb-6" }, e('h3', { className: "text-xl font-bold text-gray-900 dark:text-white" }, "Edit Catatan"), e('button', { onClick: () => setEditDebt(null), className: "text-gray-400 hover:text-gray-600 text-sm font-bold" }, "Batal")),
-                e('div', { className: "flex bg-gray-100 dark:bg-gray-900 rounded-xl p-1 mb-5" }, e('button', { onClick: () => setEditDebt({...editDebt, type: 'piutang'}), className: `flex-1 py-2.5 rounded-lg text-sm font-bold transition-all ${editDebt.type === 'piutang' ? 'bg-white dark:bg-gray-700 text-emerald-500 shadow-sm' : 'text-gray-500'}` }, "Saya Pinjamkan"), e('button', { onClick: () => setEditDebt({...editDebt, type: 'hutang'}), className: `flex-1 py-2.5 rounded-lg text-sm font-bold transition-all ${editDebt.type === 'hutang' ? 'bg-white dark:bg-gray-700 text-red-500 shadow-sm' : 'text-gray-500'}` }, "Saya Meminjam")),
-                e('form', { onSubmit: handleUpdateDebt, className: "space-y-4" },
-                  e('div', { className: "relative" }, e('span', { className: "absolute left-4 top-3.5 text-gray-400 font-extrabold text-lg" }, "Rp"), e('input', { type: "text", inputMode: "numeric", value: editDebt.amount, onChange: ev => setEditDebt({...editDebt, amount: formatNumberInput(ev.target.value)}), placeholder: "0", className: "w-full bg-gray-50 dark:bg-gray-900 border-none pl-12 pr-4 py-3.5 rounded-2xl text-2xl font-black focus:ring-2 focus:ring-emerald-500 dark:text-white outline-none", required: true })),
-                  e('input', { type: "text", value: editDebt.note, onChange: ev => setEditDebt({...editDebt, note: ev.target.value}), placeholder: "Keterangan", className: "w-full bg-gray-50 dark:bg-gray-900 border-none p-3.5 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 dark:text-white outline-none", required: true }),
-                  e('input', { type: "date", value: editDebt.date, onChange: ev => setEditDebt({...editDebt, date: ev.target.value}), className: "w-full bg-gray-50 dark:bg-gray-900 border-none p-3.5 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 dark:text-white text-gray-600 outline-none", required: true }),
-                  e('div', { className: "flex gap-3 mt-4" },
-                    e('button', { type: "button", onClick: () => handleDeleteDebt(editDebt.id), className: "flex-1 py-4 rounded-2xl text-red-500 bg-red-50 dark:bg-red-900/20 font-extrabold active:scale-95 transition-transform" }, "Hapus"),
-                    e('button', { type: "submit", className: `flex-[2] py-4 rounded-2xl text-white font-extrabold active:scale-95 transition-transform ${editDebt.type === 'piutang' ? 'bg-emerald-500 shadow-md shadow-emerald-200 dark:shadow-none' : 'bg-gray-900 dark:bg-emerald-600'}` }, "Simpan")
+            isFormOpen && e('div', { className: "fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fade-in" },
+              e('div', { className: "absolute inset-0", onClick: closeForm }),
+              e('div', { className: "w-full max-w-sm bg-white dark:bg-gray-800 rounded-3xl p-6 shadow-2xl relative z-10 animate-fade-in" },
+                e('div', { className: "flex justify-between items-center mb-6" }, e('h3', { className: "text-xl font-bold text-gray-900 dark:text-white" }, isEditMode ? "Ubah Catatan" : "Catat Baru"), e('button', { onClick: closeForm, className: "text-gray-400 hover:text-gray-600 text-sm font-bold" }, "Batal")),
+                e('div', { className: "flex bg-gray-100 dark:bg-gray-900 rounded-xl p-1 mb-5" }, e('button', { onClick: () => setFormType('piutang'), className: `flex-1 py-2.5 rounded-lg text-sm font-bold transition-all ${formType === 'piutang' ? 'bg-white dark:bg-gray-700 text-primary-500 shadow-sm' : 'text-gray-500'}` }, "Saya Pinjamkan"), e('button', { onClick: () => setFormType('hutang'), className: `flex-1 py-2.5 rounded-lg text-sm font-bold transition-all ${formType === 'hutang' ? 'bg-white dark:bg-gray-700 text-red-500 shadow-sm' : 'text-gray-500'}` }, "Saya Meminjam")),
+                e('form', { onSubmit: handleSaveDebt, className: "space-y-4" },
+                  e('div', { className: "relative" }, e('span', { className: "absolute left-4 top-3.5 text-gray-400 font-extrabold text-lg" }, "Rp"), e('input', { type: "text", inputMode: "numeric", value: amountStr, onChange: ev => setAmountStr(formatNumberInput(ev.target.value)), placeholder: "0", className: "w-full bg-gray-50 dark:bg-gray-900 border-none pl-12 pr-4 py-3.5 rounded-2xl text-2xl font-black focus:ring-2 focus:ring-primary-500 dark:text-white outline-none", required: true, autoFocus: true })),
+                  e('input', { type: "text", value: note, onChange: ev => setNote(ev.target.value), placeholder: "Keterangan (cth: pinjam untuk servis)", className: "w-full bg-gray-50 dark:bg-gray-900 border-none p-3.5 rounded-xl text-sm focus:ring-2 focus:ring-primary-500 dark:text-white outline-none", required: true }),
+                  e('input', { type: "date", value: date, onChange: ev => setDate(ev.target.value), className: "w-full bg-gray-50 dark:bg-gray-900 border-none p-3.5 rounded-xl text-sm focus:ring-2 focus:ring-primary-500 dark:text-white text-gray-600 outline-none", required: true }),
+                  e('div', { className: "flex gap-2 pt-2" },
+                    isEditMode && e('button', { type: "button", onClick: handleDeleteDebt, className: "py-4 px-5 rounded-2xl text-red-500 bg-red-50 hover:bg-red-100 font-extrabold active:scale-95 transition-transform" }, e(Icon, { name: "minus", size: 20 })),
+                    e('button', { type: "submit", className: "flex-1 py-4 rounded-2xl text-white font-extrabold bg-gray-900 dark:bg-primary-600 active:scale-95 transition-transform" }, "Simpan")
                   )
                 )
               )
@@ -607,20 +661,20 @@
           e('div', { className: "p-4 border-b border-gray-100 dark:border-gray-800" }, e('h2', { className: "text-2xl font-bold text-gray-900 dark:text-white" }, "Buku Hutang Piutang")),
           e('div', { className: "flex-1 overflow-y-auto no-scrollbar px-4 pb-36" },
             e('div', { className: "grid grid-cols-2 gap-4 mt-4 mb-6" },
-              e('div', { className: "bg-emerald-50 dark:bg-emerald-900/20 p-4 rounded-2xl border border-emerald-100 dark:border-emerald-800/30" }, e('p', { className: "text-xs text-emerald-600 dark:text-emerald-400 font-medium" }, "Total Piutang (Uang Anda)"), e('p', { className: "text-lg font-bold text-emerald-700 dark:text-emerald-300 mt-1" }, formatRp(totalPiutangAll))),
+              e('div', { className: "bg-primary-50 dark:bg-primary-900/20 p-4 rounded-2xl border border-primary-100 dark:border-primary-800/30" }, e('p', { className: "text-xs text-primary-600 dark:text-primary-400 font-medium" }, "Total Piutang (Uang Anda)"), e('p', { className: "text-lg font-bold text-primary-700 dark:text-primary-300 mt-1" }, formatRp(totalPiutangAll))),
               e('div', { className: "bg-red-50 dark:bg-red-900/20 p-4 rounded-2xl border border-red-100 dark:border-red-800/30" }, e('p', { className: "text-xs text-red-600 dark:text-red-400 font-medium" }, "Total Hutang (Harus Dibayar)"), e('p', { className: "text-lg font-bold text-red-700 dark:text-red-300 mt-1" }, formatRp(totalHutangAll)))
             ),
             e('h3', { className: "font-bold text-gray-900 dark:text-white mb-3" }, "Daftar Kontak"),
             e('div', { className: "space-y-3 pb-6" },
               contacts.map(person => {
                 const net = personSummary[person.name] || 0;
-                return e('div', { key: person.name, onClick: () => setSelectedPerson(person.name), className: "bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-sm border border-gray-50 dark:border-gray-700 flex justify-between items-center cursor-pointer active:scale-95 transition-all hover:border-emerald-300 dark:hover:border-emerald-700" }, e('div', { className: "flex items-center gap-4" }, e('div', { className: "w-10 h-10 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center font-bold uppercase dark:text-white text-gray-500" }, person.name.charAt(0)), e('div', null, e('p', { className: "font-bold text-sm dark:text-white" }, person.name), e('p', { className: "text-[11px] text-gray-400 dark:text-gray-500 mt-0.5 font-medium" }, person.phone || "-"))), e('div', { className: "text-right" }, e('p', { className: `font-bold text-sm ${net > 0 ? 'text-emerald-600' : net < 0 ? 'text-red-500' : 'text-gray-400'}` }, net === 0 ? 'Rp 0' : formatRp(Math.abs(net))), e('p', { className: "text-[10px] text-gray-500 font-medium mt-0.5" }, net > 0 ? 'Piutang' : net < 0 ? 'Hutang' : 'Lunas')));
+                return e('div', { key: person.name, onClick: () => setSelectedPerson(person.name), className: "bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-sm border border-gray-50 dark:border-gray-700 flex justify-between items-center cursor-pointer active:scale-95 transition-all hover:border-primary-300 dark:hover:border-primary-700" }, e('div', { className: "flex items-center gap-4" }, e('div', { className: "w-10 h-10 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center font-bold uppercase dark:text-white text-gray-500" }, person.name.charAt(0)), e('div', null, e('p', { className: "font-bold text-sm dark:text-white" }, person.name), e('p', { className: "text-[11px] text-gray-400 dark:text-gray-500 mt-0.5 font-medium" }, person.phone || "-"))), e('div', { className: "text-right" }, e('p', { className: `font-bold text-sm ${net > 0 ? 'text-primary-600' : net < 0 ? 'text-red-500' : 'text-gray-400'}` }, net === 0 ? 'Rp 0' : formatRp(Math.abs(net))), e('p', { className: "text-[10px] text-gray-500 font-medium mt-0.5" }, net > 0 ? 'Piutang' : net < 0 ? 'Hutang' : 'Lunas')));
               })
             )
           ),
 
           e('div', { className: "absolute bottom-16 left-0 w-full p-4 bg-gradient-to-t from-gray-50 via-gray-50 to-transparent dark:from-gray-900 dark:via-gray-900 z-40" },
-            e('button', { onClick: () => setIsAddContactOpen(true), className: "w-full py-4 bg-emerald-500 hover:bg-emerald-600 active:scale-95 transition-all text-white font-extrabold rounded-2xl shadow-lg shadow-emerald-100 dark:shadow-none flex items-center justify-center gap-2" }, e(Icon, { name: "plus", size: 20 }), "Tambah Kontak Baru")
+            e('button', { onClick: () => setIsAddContactOpen(true), className: "w-full py-4 bg-primary-500 hover:bg-primary-600 active:scale-95 transition-all text-white font-extrabold rounded-2xl shadow-lg shadow-primary-100 dark:shadow-none flex items-center justify-center gap-2" }, e(Icon, { name: "plus", size: 20 }), "Tambah Kontak Baru")
           ),
 
           isAddContactOpen && e('div', { className: "fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fade-in" },
@@ -628,110 +682,117 @@
             e('div', { className: "w-full max-w-xs sm:max-w-sm bg-white dark:bg-gray-800 rounded-3xl p-6 shadow-2xl relative z-10 animate-fade-in" },
               e('div', { className: "flex justify-between items-center mb-5" }, e('h3', { className: "text-lg font-bold text-gray-900 dark:text-white" }, "Tambah Kontak Baru"), e('button', { onClick: () => setIsAddContactOpen(false), className: "text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 text-sm font-bold" }, "Batal")),
               e('form', { onSubmit: handleAddContactSubmit, className: "space-y-4" },
-                e('div', null, e('label', { className: "text-xs text-gray-400 block mb-1 font-bold" }, "Nama Lengkap"), e('input', { type: "text", value: contactNameInput, onChange: ev => setContactNameInput(ev.target.value), placeholder: "Contoh: Ahmad Fauzi", className: "w-full bg-gray-50 dark:bg-gray-900 border-none p-3 rounded-xl text-sm font-semibold focus:ring-2 focus:ring-emerald-500 dark:text-white outline-none", required: true, autoFocus: true })),
-                e('div', null, e('label', { className: "text-xs text-gray-400 block mb-1 font-bold" }, "Nomor HP"), e('input', { type: "tel", value: contactPhoneInput, onChange: ev => setContactPhoneInput(ev.target.value), placeholder: "Contoh: 0812XXXXXXXX", className: "w-full bg-gray-50 dark:bg-gray-900 border-none p-3 rounded-xl text-sm font-semibold focus:ring-2 focus:ring-emerald-500 dark:text-white outline-none", required: true })),
-                e('button', { type: "submit", className: "w-full py-3.5 mt-2 rounded-2xl text-white font-extrabold bg-emerald-500 hover:bg-emerald-600 shadow-md shadow-emerald-200 dark:shadow-none active:scale-95 transition-transform text-sm" }, "Simpan Kontak")
+                e('div', null, e('label', { className: "text-xs text-gray-400 block mb-1 font-bold" }, "Nama Lengkap"), e('input', { type: "text", value: contactNameInput, onChange: ev => setContactNameInput(ev.target.value), placeholder: "Contoh: Ahmad Fauzi", className: "w-full bg-gray-50 dark:bg-gray-900 border-none p-3 rounded-xl text-sm font-semibold focus:ring-2 focus:ring-primary-500 dark:text-white outline-none", required: true, autoFocus: true })),
+                e('div', null, e('label', { className: "text-xs text-gray-400 block mb-1 font-bold" }, "Nomor HP"), e('input', { type: "tel", value: contactPhoneInput, onChange: ev => setContactPhoneInput(ev.target.value), placeholder: "Contoh: 0812XXXXXXXX", className: "w-full bg-gray-50 dark:bg-gray-900 border-none p-3 rounded-xl text-sm font-semibold focus:ring-2 focus:ring-primary-500 dark:text-white outline-none", required: true })),
+                e('button', { type: "submit", className: "w-full py-3.5 mt-2 rounded-2xl text-white font-extrabold bg-primary-500 hover:bg-primary-600 shadow-md shadow-primary-200 dark:shadow-none active:scale-95 transition-transform text-sm" }, "Simpan Kontak")
               )
             )
           )
         );
       };
 
+      // E. Halaman Settings Component
       const SettingsComponent = () => {
-        const [draftName, setDraftName] = useState(accountName);
-        const [draftDark, setDraftDark] = useState(isDarkMode);
-        const [draftTheme, setDraftTheme] = useState(themeColor);
-        const inputRef = useRef(null);
+        const [tempName, setTempName] = useState(appSettings.name);
+        const [tempTheme, setTempTheme] = useState(appSettings.theme);
+        const [tempIsDark, setTempIsDark] = useState(appSettings.isDark);
+        const fileInputRef = useRef(null);
 
         const handleSaveSettings = () => {
-          setAccountName(draftName);
-          setIsDarkMode(draftDark);
-          setThemeColor(draftTheme);
-          showToast("Pengaturan disimpan!");
+          const newSettings = { name: tempName, theme: tempTheme, isDark: tempIsDark };
+          setAppSettings(newSettings);
+          localStorage.setItem(LS_KEYS.SETTINGS, JSON.stringify(newSettings));
+          showToast("Pengaturan Disimpan!");
         };
 
-        const handleExportData = () => {
-          const data = { transactions, debts, contacts, accountName, themeColor: draftTheme, isDarkMode: draftDark };
-          const blob = new Blob([JSON.stringify(data)], { type: "application/json" });
-          const url = URL.createObjectURL(blob);
-          const a = document.createElement("a");
-          a.href = url; a.download = `Backup_KeuanganKu_${getTodayDate()}.json`;
-          document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
-          showToast("Data berhasil diekspor!");
+        const handleExportJSON = () => {
+          const exportData = { transactions, debts, contacts, settings: appSettings };
+          const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(exportData));
+          const el = document.createElement('a');
+          el.setAttribute("href", dataStr);
+          el.setAttribute("download", `Backup_KeuanganKu_${getTodayDate()}.json`);
+          document.body.appendChild(el);
+          el.click();
+          el.remove();
+          showToast("Data Berhasil Diexport!");
         };
 
-        const handleImportData = (eEvent) => {
-          const file = eEvent.target.files[0];
+        const handleImportJSON = (ev) => {
+          const file = ev.target.files;
           if (!file) return;
           const reader = new FileReader();
-          reader.onload = (event) => {
+          reader.onload = (e) => {
             try {
-              const parsed = JSON.parse(event.target.result);
-              if (parsed.transactions) setTransactions(parsed.transactions);
-              if (parsed.debts) setDebts(parsed.debts);
-              if (parsed.contacts) setContacts(parsed.contacts);
-              if (parsed.accountName) { setAccountName(parsed.accountName); setDraftName(parsed.accountName); }
-              if (parsed.themeColor) { setThemeColor(parsed.themeColor); setDraftTheme(parsed.themeColor); }
-              if (parsed.isDarkMode !== undefined) { setIsDarkMode(parsed.isDarkMode); setDraftDark(parsed.isDarkMode); }
-              showToast("Data berhasil dipulihkan!");
-            } catch (err) {
-              alert("Format file JSON tidak valid!");
-            }
+              const imported = JSON.parse(e.target.result);
+              if (imported.transactions) updateTransactions(imported.transactions);
+              if (imported.debts) updateDebts(imported.debts);
+              if (imported.contacts) updateContacts(imported.contacts);
+              if (imported.settings) {
+                setAppSettings(imported.settings);
+                localStorage.setItem(LS_KEYS.SETTINGS, JSON.stringify(imported.settings));
+              }
+              showToast("Data Berhasil Di-Restore!");
+              // Note: Dalam real app, kita juga butuh push data massal ke cloud (di luar scope single api).
+            } catch (err) { alert("Format file tidak valid!"); }
           };
           reader.readAsText(file);
         };
 
-        return e('div', { className: "p-4 pb-24 h-full overflow-y-auto no-scrollbar animate-fade-in flex flex-col" },
+        return e('div', { className: "p-4 pb-24 h-full overflow-y-auto no-scrollbar animate-fade-in" },
           e('h2', { className: "text-2xl font-bold text-gray-900 dark:text-white mb-6" }, "Pengaturan"),
           
-          e('div', { className: "bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden mb-6" },
-            e('div', { className: "p-5 border-b border-gray-50 dark:border-gray-700" },
+          // Form Setting Utama
+          e('div', { className: "bg-white dark:bg-gray-800 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-700 p-5 mb-6 space-y-5" },
+            e('div', null,
                 e('label', { className: "text-xs text-gray-500 block mb-2 font-medium" }, "Nama Profil"),
-                e('input', { type: "text", value: draftName, onChange: ev => setDraftName(ev.target.value), className: "w-full bg-gray-50 dark:bg-gray-900 px-4 py-3 rounded-xl font-bold focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:text-white" })
+                e('input', { type: "text", value: tempName, onChange: ev => setTempName(ev.target.value), className: "w-full bg-gray-50 dark:bg-gray-900 px-4 py-3 rounded-xl font-bold focus:outline-none focus:ring-2 focus:ring-primary-500 dark:text-white" })
             ),
-            e('div', { className: "p-5 border-b border-gray-50 dark:border-gray-700 flex justify-between items-center" },
-              e('div', { className: "flex items-center gap-3 dark:text-gray-200" }, e(Icon, { name: draftDark ? 'moon' : 'sun', size: 22, className: draftDark ? 'text-indigo-400' : 'text-amber-500' }), e('span', { className: "font-medium text-sm" }, "Mode Gelap")),
-              e('button', { onClick: () => setDraftDark(!draftDark), className: `w-12 h-6 rounded-full relative ${draftDark ? 'bg-indigo-500' : 'bg-gray-300'}` },
-                e('div', { className: `w-5 h-5 bg-white rounded-full absolute top-0.5 transition-transform ${draftDark ? 'translate-x-6' : 'translate-x-0.5'}` })
+            e('div', { className: "flex justify-between items-center" },
+              e('div', { className: "flex items-center gap-3 dark:text-gray-200" }, e(Icon, { name: tempIsDark ? 'moon' : 'sun', size: 22, className: tempIsDark ? 'text-indigo-400' : 'text-amber-500' }), e('span', { className: "font-medium text-sm" }, "Mode Gelap")),
+              e('button', { onClick: () => setTempIsDark(!tempIsDark), className: `w-12 h-6 rounded-full relative transition-colors ${tempIsDark ? 'bg-primary-500' : 'bg-gray-300'}` },
+                e('div', { className: `w-5 h-5 bg-white rounded-full absolute top-0.5 transition-transform ${tempIsDark ? 'translate-x-6' : 'translate-x-0.5'}` })
               )
             ),
-            e('div', { className: "p-5 border-b border-gray-50 dark:border-gray-700" },
-              e('div', { className: "flex items-center gap-3 mb-4 dark:text-gray-200" }, e(Icon, { name: "pieChart", size: 22, className: "text-rose-400" }), e('span', { className: "font-medium text-sm" }, "Warna Tema Utama")),
-              e('div', { className: "flex gap-4" },
-                e('button', { onClick: () => setDraftTheme('hijau'), className: `w-10 h-10 rounded-full bg-[#10b981] flex items-center justify-center ${draftTheme === 'hijau' ? 'ring-4 ring-offset-2 ring-[#10b981] dark:ring-offset-gray-800' : ''}` }, draftTheme === 'hijau' && e(Icon, {name:"check", size:16, className:"text-white"})),
-                e('button', { onClick: () => setDraftTheme('biru'), className: `w-10 h-10 rounded-full bg-[#3b82f6] flex items-center justify-center ${draftTheme === 'biru' ? 'ring-4 ring-offset-2 ring-[#3b82f6] dark:ring-offset-gray-800' : ''}` }, draftTheme === 'biru' && e(Icon, {name:"check", size:16, className:"text-white"})),
-                e('button', { onClick: () => setDraftTheme('ungu'), className: `w-10 h-10 rounded-full bg-[#a855f7] flex items-center justify-center ${draftTheme === 'ungu' ? 'ring-4 ring-offset-2 ring-[#a855f7] dark:ring-offset-gray-800' : ''}` }, draftTheme === 'ungu' && e(Icon, {name:"check", size:16, className:"text-white"}))
+            e('div', null,
+              e('label', { className: "text-xs text-gray-500 block mb-3 font-medium" }, "Warna Tema"),
+              e('div', { className: "flex gap-3" },
+                e('button', { onClick: () => setTempTheme('emerald'), className: `w-10 h-10 rounded-full bg-[#10b981] ${tempTheme === 'emerald' ? 'ring-4 ring-emerald-200 dark:ring-emerald-900' : ''}` }),
+                e('button', { onClick: () => setTempTheme('blue'), className: `w-10 h-10 rounded-full bg-[#3b82f6] ${tempTheme === 'blue' ? 'ring-4 ring-blue-200 dark:ring-blue-900' : ''}` }),
+                e('button', { onClick: () => setTempTheme('purple'), className: `w-10 h-10 rounded-full bg-[#8b5cf6] ${tempTheme === 'purple' ? 'ring-4 ring-purple-200 dark:ring-purple-900' : ''}` })
               )
             ),
-            e('div', { className: "p-5 bg-gray-50 dark:bg-gray-900/50" },
-              e('button', { onClick: handleSaveSettings, className: "w-full py-3.5 rounded-xl text-white font-extrabold bg-emerald-500 shadow-md shadow-emerald-200 dark:shadow-none active:scale-95 transition-transform" }, "Simpan Pengaturan")
-            )
+            e('button', { onClick: handleSaveSettings, className: "w-full py-3 bg-primary-500 text-white font-bold rounded-xl active:scale-95 transition-transform" }, "Simpan Pengaturan")
           ),
 
-          e('div', { className: "bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden mb-6" },
-            e('div', { onClick: handleExportData, className: "p-5 border-b border-gray-50 dark:border-gray-700 flex justify-between items-center cursor-pointer active:bg-gray-50 dark:active:bg-gray-700" },
-              e('div', { className: "flex items-center gap-3 dark:text-gray-200" }, e(Icon, { name: "download", size: 22, className: "text-emerald-500" }), e('div', null, e('span', { className: "font-medium text-sm block" }, "Backup Data (Export)"), e('span', { className: "text-[10px] text-gray-500" }, "Unduh semua data ke .json"))), e(Icon, { name: "chevronLeft", size: 18, className: "text-gray-400 rotate-180" })
+          // Status & Data Management
+          e('div', { className: "bg-white dark:bg-gray-800 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden mb-6" },
+            // Network Status Info
+            e('div', { className: "p-5 border-b border-gray-50 dark:border-gray-700 flex items-center justify-between" }, 
+              e('div', { className: "flex items-center gap-3 dark:text-gray-200" }, 
+                e(Icon, { name: isOnline ? "cloud" : "cloudOff", size: 22, className: isOnline ? "text-primary-500" : "text-gray-400" }), 
+                e('div', null, e('span', { className: "font-bold text-sm block" }, isOnline ? "Online (Tersambung)" : "Offline Mode"), e('span', { className: "text-[10px] text-gray-500" }, syncQueueLength > 0 ? `${syncQueueLength} data mengantre sinkronisasi` : "Semua data sinkron"))
+              ),
+              syncQueueLength > 0 && isOnline && !isSyncing && e('button', { onClick: processSyncQueue, className: "text-xs font-bold text-primary-500 bg-primary-50 px-2 py-1 rounded-md" }, "Sync")
             ),
-            e('div', { onClick: () => inputRef.current.click(), className: "p-5 flex justify-between items-center cursor-pointer active:bg-gray-50 dark:active:bg-gray-700" },
-              e('div', { className: "flex items-center gap-3 dark:text-gray-200" }, e(Icon, { name: "upload", size: 22, className: "text-blue-500" }), e('div', null, e('span', { className: "font-medium text-sm block" }, "Restore Data (Import)"), e('span', { className: "text-[10px] text-gray-500" }, "Pulihkan dari file .json"))), e(Icon, { name: "chevronLeft", size: 18, className: "text-gray-400 rotate-180" })
+            // Export / Import
+            e('div', { onClick: handleExportJSON, className: "p-5 border-b border-gray-50 dark:border-gray-700 flex items-center gap-3 cursor-pointer active:bg-gray-50 dark:active:bg-gray-700" },
+              e(Icon, { name: "download", size: 22, className: "text-primary-500" }), e('span', { className: "font-medium text-sm dark:text-white" }, "Backup / Export JSON")
             ),
-            e('input', { type: "file", accept: ".json", ref: inputRef, onChange: handleImportData, className: "hidden" })
+            e('div', { onClick: () => fileInputRef.current.click(), className: "p-5 flex items-center gap-3 cursor-pointer active:bg-gray-50 dark:active:bg-gray-700" },
+              e(Icon, { name: "upload", size: 22, className: "text-orange-500" }), e('span', { className: "font-medium text-sm dark:text-white" }, "Restore / Import JSON"),
+              e('input', { type: "file", accept: ".json", ref: fileInputRef, onChange: handleImportJSON, className: "hidden" })
+            )
           )
         );
       };
 
+      // Navigasi Bawah
       const NavButton = ({ tabId, iconName, label, onClickOverride }) => {
         const isActive = activeTab === tabId;
-        const clickHandler = onClickOverride || (() => setActiveTab(tabId));
-        return e('button', { 
-            onClick: clickHandler, 
-            className: `flex flex-col items-center p-2 transition-colors ${isActive ? 'text-emerald-500' : 'text-gray-400 hover:text-gray-600 dark:hover:text-gray-300'}` 
-          },
-          e(Icon, { name: iconName, size: 22 }),
-          e('span', { className: "text-[10px] mt-1 font-medium" }, label)
-        );
+        return e('button', { onClick: onClickOverride || (() => setActiveTab(tabId)), className: `flex flex-col items-center p-2 transition-colors ${isActive ? 'text-primary-500' : 'text-gray-400 hover:text-gray-600 dark:hover:text-gray-300'}` }, e(Icon, { name: iconName, size: 22 }), e('span', { className: "text-[10px] mt-1 font-medium" }, label));
       };
 
+      // F. RENDER UTAMA ROOT DIV
       return e('div', { className: "w-full h-screen max-w-md mx-auto relative flex flex-col bg-gray-50 dark:bg-gray-900 shadow-2xl overflow-hidden font-sans" },
         renderInitialLoading(),
         renderToast(),
@@ -745,7 +806,7 @@
 
         e('nav', { className: "absolute bottom-0 w-full bg-white/95 dark:bg-gray-900/95 backdrop-blur-md border-t border-gray-200 dark:border-gray-800 pb-safe pt-2 px-6 flex justify-between items-center z-50" },
           e(NavButton, { tabId: 'dashboard', iconName: 'home', label: 'Beranda', onClickOverride: () => {setActiveTab('dashboard'); setSelectedPerson(null);} }),
-          e(NavButton, { tabId: 'catat', iconName: 'wallet', label: 'Catat', onClickOverride: () => {setCatatTrigger(null); setActiveTab('catat'); setSelectedPerson(null);} }),
+          e(NavButton, { tabId: 'catat', iconName: 'wallet', label: 'Catat', onClickOverride: () => {setActiveTab('catat'); setSelectedPerson(null);} }),
           e(NavButton, { tabId: 'hutang', iconName: 'users', label: 'Hutang', onClickOverride: () => {setActiveTab('hutang'); setSelectedPerson(null);} }),
           e(NavButton, { tabId: 'settings', iconName: 'settings', label: 'Setelan', onClickOverride: () => {setActiveTab('settings'); setSelectedPerson(null);} })
         )
