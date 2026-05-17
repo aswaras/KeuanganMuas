@@ -279,6 +279,7 @@
       // C. Halaman Catat Transaksi
       const CatatComponent = () => {
         const [isFormOpen, setIsFormOpen] = useState(false);
+        const [editTx, setEditTx] = useState(null); // Mode edit state
         const [formType, setFormType] = useState('out');
         const [amount, setAmount] = useState('');
         const [category, setCategory] = useState('');
@@ -302,6 +303,25 @@
           setAmount(''); setCategory(''); setNote(''); setDate(getTodayDate());
           setIsFormOpen(false);
           showToast("Transaksi dicatat!");
+        };
+
+        const handleUpdateTx = (ev) => {
+          ev.preventDefault();
+          const parsedAmount = parseInt(editTx.amount.toString().replace(/\./g, ''), 10);
+          if (!parsedAmount || !editTx.category) return;
+          
+          const updatedTx = { ...editTx, amount: parsedAmount };
+          setTransactions(transactions.map(t => t.id === updatedTx.id ? updatedTx : t));
+          syncToCloud('editTransaction', updatedTx);
+          setEditTx(null);
+          showToast("Transaksi diperbarui!");
+        };
+
+        const handleDeleteTx = (id) => {
+          setTransactions(transactions.filter(t => t.id !== id));
+          syncToCloud('deleteTransaction', { id });
+          setEditTx(null);
+          showToast("Transaksi dihapus!");
         };
 
         const filteredTx = useMemo(() => {
@@ -362,7 +382,7 @@
             e('div', { className: "space-y-3" },
               filteredTx.length === 0 ? e('div', { className: "text-center py-12 text-gray-400" }, e(Icon, { name: "pieChart", size: 40, className: "mx-auto mb-2 opacity-30" }), e('p', { className: "text-sm" }, "Tidak ada transaksi dalam filter ini")) :
               filteredTx.map(t => 
-                e('div', { key: t.id, className: "bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-sm border border-gray-50 dark:border-gray-700/50 flex justify-between items-center" },
+                e('div', { key: t.id, onClick: () => setEditTx({ ...t, amount: formatNumberInput(t.amount.toString()) }), className: "bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-sm border border-gray-50 dark:border-gray-700/50 flex justify-between items-center cursor-pointer active:scale-95 transition-transform" },
                   e('div', { className: "flex items-center gap-3" },
                     e('div', { className: `p-2 rounded-xl ${t.type === 'in' ? 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-500' : 'bg-red-50 dark:bg-red-950/40 text-red-500'}` }, e(Icon, { name: t.type === 'in' ? 'arrowDown' : 'arrowUp', size: 18 })),
                     e('div', null, e('p', { className: "font-semibold text-gray-900 dark:text-white text-sm" }, t.category), e('p', { className: "text-[11px] text-gray-500 mt-0.5" }, t.note || '-'))
@@ -393,6 +413,24 @@
             )
           ),
 
+          // Modal Edit Transaksi
+          editTx && e('div', { className: "fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fade-in" },
+            e('div', { className: "absolute inset-0", onClick: () => setEditTx(null) }),
+            e('div', { className: "w-full max-w-xs sm:max-w-sm bg-white dark:bg-gray-800 rounded-3xl p-6 shadow-2xl relative z-10 animate-fade-in" },
+              e('div', { className: "flex justify-between items-center mb-6" }, e('h3', { className: "text-xl font-bold text-gray-900 dark:text-white" }, "Edit Transaksi"), e('button', { onClick: () => setEditTx(null), className: "text-gray-400 hover:text-gray-600 text-sm font-bold" }, "Batal")),
+              e('div', { className: "flex bg-gray-100 dark:bg-gray-900 rounded-xl p-1 mb-5" }, e('button', { onClick: () => setEditTx({...editTx, type: 'out'}), className: `flex-1 py-2.5 rounded-lg text-sm font-bold transition-all ${editTx.type === 'out' ? 'bg-white dark:bg-gray-700 text-red-500 shadow-sm' : 'text-gray-500'}` }, "Pengeluaran"), e('button', { onClick: () => setEditTx({...editTx, type: 'in'}), className: `flex-1 py-2.5 rounded-lg text-sm font-bold transition-all ${editTx.type === 'in' ? 'bg-white dark:bg-gray-700 text-emerald-500 shadow-sm' : 'text-gray-500'}` }, "Pemasukan")),
+              e('form', { onSubmit: handleUpdateTx, className: "space-y-4" },
+                e('div', { className: "relative" }, e('span', { className: "absolute left-4 top-3.5 text-gray-400 font-extrabold text-lg" }, "Rp"), e('input', { type: "text", inputMode: "numeric", value: editTx.amount, onChange: ev => setEditTx({...editTx, amount: formatNumberInput(ev.target.value)}), placeholder: "0", className: "w-full bg-gray-50 dark:bg-gray-900 border-none pl-12 pr-4 py-3.5 rounded-2xl text-2xl font-black focus:ring-2 focus:ring-emerald-500 dark:text-white outline-none", required: true })),
+                e('div', { className: "grid grid-cols-2 gap-3" }, e('input', { type: "text", value: editTx.category, onChange: ev => setEditTx({...editTx, category: ev.target.value}), placeholder: "Kategori", className: "w-full bg-gray-50 dark:bg-gray-900 border-none p-3.5 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 dark:text-white outline-none", required: true }), e('input', { type: "date", value: editTx.date, onChange: ev => setEditTx({...editTx, date: ev.target.value}), className: "w-full bg-gray-50 dark:bg-gray-900 border-none p-3.5 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 dark:text-white text-gray-600 outline-none", required: true })),
+                e('input', { type: "text", value: editTx.note, onChange: ev => setEditTx({...editTx, note: ev.target.value}), placeholder: "Catatan opsional...", className: "w-full bg-gray-50 dark:bg-gray-900 border-none p-3.5 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 dark:text-white outline-none" }),
+                e('div', { className: "flex gap-3 mt-4" },
+                  e('button', { type: "button", onClick: () => handleDeleteTx(editTx.id), className: "flex-1 py-4 rounded-2xl text-red-500 bg-red-50 dark:bg-red-900/20 font-extrabold active:scale-95 transition-transform" }, "Hapus"),
+                  e('button', { type: "submit", className: `flex-[2] py-4 rounded-2xl text-white font-extrabold active:scale-95 transition-transform ${editTx.type === 'in' ? 'bg-emerald-500 shadow-md shadow-emerald-200 dark:shadow-none' : 'bg-red-500 shadow-md shadow-red-200 dark:shadow-none'}` }, "Simpan")
+                )
+              )
+            )
+          ),
+
           // Modal Filter Tanggal Kustom
           showRangeModal && e('div', { className: "fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fade-in" },
             e('div', { className: "bg-white dark:bg-gray-800 w-full max-w-xs rounded-3xl p-6 shadow-2xl relative animate-fade-in" },
@@ -416,6 +454,7 @@
         const [formType, setFormType] = useState('piutang');
         const [amount, setAmount] = useState('');
         const [note, setNote] = useState('');
+        const [editDebt, setEditDebt] = useState(null); // Mode Edit Debt state
         
         const personSummary = useMemo(() => {
           const summary = {};
@@ -457,18 +496,52 @@
             const parsedAmount = parseInt(amount.toString().replace(/\./g, ''), 10);
             if (!parsedAmount) return;
             const newDebt = { id: generateId(), person: selectedPerson, type: formType, amount: parsedAmount, date: getTodayDate(), note };
+            
             setDebts([...debts, newDebt]);
             syncToCloud('addDebt', newDebt);
+
             setAmount(''); setNote('');
             showToast("Catatan disimpan!");
           };
 
+          const handleUpdateDebt = (ev) => {
+            ev.preventDefault();
+            const parsedAmount = parseInt(editDebt.amount.toString().replace(/\./g, ''), 10);
+            if (!parsedAmount) return;
+            const updatedDebt = { ...editDebt, amount: parsedAmount };
+            setDebts(debts.map(d => d.id === updatedDebt.id ? updatedDebt : d));
+            syncToCloud('editDebt', updatedDebt);
+            setEditDebt(null);
+            showToast("Catatan diperbarui!");
+          };
+
+          const handleDeleteDebt = (id) => {
+            setDebts(debts.filter(d => d.id !== id));
+            syncToCloud('deleteDebt', { id });
+            setEditDebt(null);
+            showToast("Catatan dihapus!");
+          };
+
+          const handlePelunasan = () => {
+            if (netBalance === 0) return;
+            const type = netBalance > 0 ? 'hutang' : 'piutang'; // Reverse untuk menetralkan saldo
+            const newDebt = { id: generateId(), person: selectedPerson, type, amount: Math.abs(netBalance), date: getTodayDate(), note: 'Pelunasan' };
+            setDebts([...debts, newDebt]);
+            syncToCloud('addDebt', newDebt);
+            showToast("Pelunasan dicatat!");
+          };
+
           return e('div', { className: "p-4 pb-24 h-full overflow-y-auto no-scrollbar animate-fade-in" },
             e('button', { onClick: () => setSelectedPerson(null), className: "flex items-center text-gray-500 mb-6 hover:text-gray-800 dark:hover:text-white" }, e(Icon, { name: "chevronLeft", size: 20, className: "mr-1" }), "Kembali"),
-            e('div', {className: "flex items-center gap-3 mb-6"},
-              e('div', {className: "w-12 h-12 bg-gray-800 text-white dark:bg-white dark:text-gray-900 rounded-full flex items-center justify-center font-bold text-lg uppercase"}, selectedPerson.charAt(0)),
-              e('h2', { className: "text-2xl font-bold text-gray-900 dark:text-white" }, selectedPerson)
+            
+            e('div', {className: "flex items-center justify-between mb-6"},
+              e('div', {className: "flex items-center gap-3"},
+                e('div', {className: "w-12 h-12 bg-gray-800 text-white dark:bg-white dark:text-gray-900 rounded-full flex items-center justify-center font-bold text-lg uppercase"}, selectedPerson.charAt(0)),
+                e('h2', { className: "text-2xl font-bold text-gray-900 dark:text-white" }, selectedPerson)
+              ),
+              netBalance !== 0 && e('button', { onClick: handlePelunasan, className: "px-4 py-2 bg-emerald-100 text-emerald-600 dark:bg-emerald-900/50 dark:text-emerald-400 font-bold text-sm rounded-xl active:scale-95 transition-transform" }, "Pelunasan")
             ),
+            
             e('div', { className: `p-5 rounded-2xl mb-6 border shadow-sm ${netBalance > 0 ? 'bg-emerald-50 border-emerald-100 dark:bg-emerald-900/30 dark:border-emerald-800' : netBalance < 0 ? 'bg-red-50 border-red-100 dark:bg-red-900/30 dark:border-red-800' : 'bg-gray-100 border-gray-200 dark:bg-gray-800 dark:border-gray-700'}` },
               e('p', { className: `text-sm mb-1 font-medium ${netBalance > 0 ? 'text-emerald-700 dark:text-emerald-400' : netBalance < 0 ? 'text-red-700 dark:text-red-400' : 'text-gray-600 dark:text-gray-400'}` }, netBalance > 0 ? `${selectedPerson} berhutang ke Anda:` : netBalance < 0 ? `Anda berhutang ke ${selectedPerson}:` : 'Status Lunas (Rp 0)'),
               e('p', { className: `text-3xl font-extrabold ${netBalance > 0 ? 'text-emerald-600' : netBalance < 0 ? 'text-red-600' : 'text-gray-800 dark:text-white'}` }, formatRp(Math.abs(netBalance)))
@@ -487,14 +560,39 @@
             e('h3', { className: "font-bold text-gray-900 dark:text-white mb-3" }, "Riwayat Bersama ", selectedPerson),
             e('div', { className: "space-y-3 pb-6" },
               personDebts.length === 0 ? e('p', {className: "text-center text-sm text-gray-400 py-4"}, "Belum ada riwayat hutang piutang") :
-              personDebts.map(d => e('div', { key: d.id, className: "bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-sm border border-gray-50 dark:border-gray-700 flex justify-between items-center" }, 
-                e('div', null, e('p', { className: "font-semibold text-gray-900 dark:text-white text-sm capitalize" }, d.note), e('p', { className: "text-xs text-gray-500 mt-0.5" }, d.date)), 
-                e('p', { className: `font-bold text-sm ${d.type === 'piutang' ? 'text-emerald-600' : 'text-red-500'}` }, `${d.type === 'piutang' ? '+' : '-'}${formatRp(d.amount)}`)))
+              personDebts.map(d => 
+                e('div', { key: d.id, onClick: () => setEditDebt({ ...d, amount: formatNumberInput(d.amount.toString()) }), className: "bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-sm border border-gray-50 dark:border-gray-700 flex justify-between items-center cursor-pointer active:scale-95 transition-transform" },
+                  e('div', null, 
+                    e('p', { className: "font-semibold text-gray-900 dark:text-white text-sm capitalize" }, d.note), 
+                    e('p', { className: "text-xs text-gray-500 mt-0.5" }, d.date)
+                  ),
+                  e('p', { className: `font-bold text-sm ${d.type === 'piutang' ? 'text-emerald-600' : 'text-red-500'}` }, 
+                    `${d.type === 'piutang' ? '+' : '-'}${formatRp(d.amount)}`
+                  )
+                )
+              )
+            ),
+
+            // Modal Edit Hutang/Piutang
+            editDebt && e('div', { className: "fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fade-in" },
+              e('div', { className: "absolute inset-0", onClick: () => setEditDebt(null) }),
+              e('div', { className: "w-full max-w-xs sm:max-w-sm bg-white dark:bg-gray-800 rounded-3xl p-6 shadow-2xl relative z-10 animate-fade-in" },
+                e('div', { className: "flex justify-between items-center mb-6" }, e('h3', { className: "text-xl font-bold text-gray-900 dark:text-white" }, "Edit Catatan"), e('button', { onClick: () => setEditDebt(null), className: "text-gray-400 hover:text-gray-600 text-sm font-bold" }, "Batal")),
+                e('div', { className: "flex bg-gray-100 dark:bg-gray-900 rounded-xl p-1 mb-5" }, e('button', { onClick: () => setEditDebt({...editDebt, type: 'piutang'}), className: `flex-1 py-2.5 rounded-lg text-sm font-bold transition-all ${editDebt.type === 'piutang' ? 'bg-white dark:bg-gray-700 text-emerald-500 shadow-sm' : 'text-gray-500'}` }, "Saya Pinjamkan"), e('button', { onClick: () => setEditDebt({...editDebt, type: 'hutang'}), className: `flex-1 py-2.5 rounded-lg text-sm font-bold transition-all ${editDebt.type === 'hutang' ? 'bg-white dark:bg-gray-700 text-red-500 shadow-sm' : 'text-gray-500'}` }, "Saya Meminjam")),
+                e('form', { onSubmit: handleUpdateDebt, className: "space-y-4" },
+                  e('div', { className: "relative" }, e('span', { className: "absolute left-4 top-3.5 text-gray-400 font-extrabold text-lg" }, "Rp"), e('input', { type: "text", inputMode: "numeric", value: editDebt.amount, onChange: ev => setEditDebt({...editDebt, amount: formatNumberInput(ev.target.value)}), placeholder: "0", className: "w-full bg-gray-50 dark:bg-gray-900 border-none pl-12 pr-4 py-3.5 rounded-2xl text-2xl font-black focus:ring-2 focus:ring-emerald-500 dark:text-white outline-none", required: true })),
+                  e('input', { type: "date", value: editDebt.date, onChange: ev => setEditDebt({...editDebt, date: ev.target.value}), className: "w-full bg-gray-50 dark:bg-gray-900 border-none p-3.5 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 dark:text-white text-gray-600 outline-none", required: true }),
+                  e('input', { type: "text", value: editDebt.note, onChange: ev => setEditDebt({...editDebt, note: ev.target.value}), placeholder: "Keterangan...", className: "w-full bg-gray-50 dark:bg-gray-900 border-none p-3.5 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 dark:text-white outline-none", required: true }),
+                  e('div', { className: "flex gap-3 mt-4" },
+                    e('button', { type: "button", onClick: () => handleDeleteDebt(editDebt.id), className: "flex-1 py-4 rounded-2xl text-red-500 bg-red-50 dark:bg-red-900/20 font-extrabold active:scale-95 transition-transform" }, "Hapus"),
+                    e('button', { type: "submit", className: `flex-[2] py-4 rounded-2xl text-white font-extrabold active:scale-95 transition-transform ${editDebt.type === 'piutang' ? 'bg-emerald-500 shadow-md shadow-emerald-200 dark:shadow-none' : 'bg-gray-900 dark:bg-emerald-600'}` }, "Simpan")
+                  )
+                )
+              )
             )
           );
         }
 
-        // --- TAMPILAN UTAMA DAFTAR KONTAK ---
         const totalPiutangAll = Object.values(personSummary).filter(v => v > 0).reduce((a, b) => a + b, 0);
         const totalHutangAll = Math.abs(Object.values(personSummary).filter(v => v < 0).reduce((a, b) => a + b, 0));
 
